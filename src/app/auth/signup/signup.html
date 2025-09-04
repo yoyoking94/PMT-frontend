@@ -1,8 +1,9 @@
 <h2 class="loginFormH2">Inscription</h2>
-<form (ngSubmit)="onSubmit()" class="signup-form">
+<form (ngSubmit)="onSubmit()" #f="ngForm" class="signup-form">
   <label for="username">Nom d'utilisateur</label>
   <input
     id="username"
+    type="text"
     [(ngModel)]="username"
     name="username"
     required
@@ -30,4 +31,7 @@
   />
 
   <button type="submit">S'inscrire</button>
+  @if (message) {
+  <div style="color: green">{{ message }}</div>
+  }
 </form>

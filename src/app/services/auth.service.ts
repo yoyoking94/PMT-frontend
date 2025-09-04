@@ -1,34 +1,31 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+interface SignupData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface SigninData {
+  username: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // Etat de connexion de l'utilisateur suivi en interne
-  private loggedIn = new BehaviorSubject<boolean>(false);
+  private apiUrl = 'http://localhost:8080/api/auth'; // met à jour l'URL si besoin
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  // Observable public pour suivre l'état de connexion
-  get isLoggedIn(): Observable<boolean> {
-    return this.loggedIn.asObservable();
+  signin(data: SigninData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/signin`, data);
   }
 
-  // Méthode de connexion simple (simulation)
-  login(username: string, password: string): Observable<boolean> {
-    // Simulation: connexion réussie si username === 'user' et password === 'password'
-    if (username === 'user' && password === 'password') {
-      this.loggedIn.next(true);
-      return of(true); // Observable qui émet true
-    } else {
-      this.loggedIn.next(false);
-      return of(false); // Observable qui émet false
-    }
-  }
-
-  // Méthode de déconnexion
-  logout(): void {
-    this.loggedIn.next(false);
+  signup(data: SignupData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/signup`, data);
   }
 }

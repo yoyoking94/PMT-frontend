@@ -1,19 +1,32 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signin',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
 export class SigninComponent {
   username = '';
   password = '';
+  errorMsg = '';
+
+  constructor(private authService: AuthService) {}
 
   onSubmit() {
-    // Temporarily just log credentials to console
-    console.log('Login:', this.username, this.password);
-    alert('Connexion temporaire. Backend non connecté.');
+    this.authService.signin({ username: this.username, password: this.password }).subscribe({
+      next: (response) => {
+        console.log('Connexion réussie !', response);
+        this.errorMsg = '';
+      },
+      error: (err) => {
+        console.error('Erreur backend:', err);
+        this.errorMsg = err.error || 'Identifiants invalides ou erreur serveur.';
+      },
+    });
   }
 }

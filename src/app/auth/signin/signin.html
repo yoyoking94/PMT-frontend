@@ -1,8 +1,9 @@
 <h2 class="loginFormH2">Connexion</h2>
-<form (ngSubmit)="onSubmit()" class="login-form">
+<form (ngSubmit)="onSubmit()" #f="ngForm" class="login-form">
   <label for="username">Nom d'utilisateur</label>
   <input
     id="username"
+    type="text"
     [(ngModel)]="username"
     name="username"
     required
@@ -20,4 +21,7 @@
   />
 
   <button type="submit">Se connecter</button>
+  @if (errorMsg) {
+  <div style="color: red">{{ errorMsg }}</div>
+  }
 </form>
