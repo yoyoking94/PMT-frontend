@@ -1,9 +1,10 @@
 <main>
-  <h1>{{ message }}</h1>
-
   <nav>
-    <a *ngIf="isOnSignin()" routerLink="/signup" class="link-button">Inscrivez-vous</a>
-    <a *ngIf="isOnSignup()" routerLink="/signin" class="link-button">Connectez-vous</a>
+    @if (isOnSignin()) {
+    <a routerLink="/signup" class="link-button">Inscrivez-vous</a>
+    } @if (isOnSignup()) {
+    <a routerLink="/signin" class="link-button">Connectez-vous</a>
+    }
   </nav>
 
   <router-outlet></router-outlet>

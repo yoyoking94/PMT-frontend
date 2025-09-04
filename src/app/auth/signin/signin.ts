@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signin',
@@ -15,17 +16,18 @@ export class SigninComponent {
   password = '';
   errorMsg = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     this.authService.signin({ username: this.username, password: this.password }).subscribe({
       next: (response) => {
-        console.log('Connexion réussie !', response);
+        console.log('Connexion réussie !');
+        this.authService.setLoggedUsername(this.username); // Stocke le username
         this.errorMsg = '';
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('Erreur backend:', err);
-        this.errorMsg = err.error || 'Identifiants invalides ou erreur serveur.';
+        this.errorMsg = err.error?.message || 'Identifiants invalides ou erreur serveur.';
       },
     });
   }
