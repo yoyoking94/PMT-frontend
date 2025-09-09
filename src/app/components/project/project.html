@@ -18,16 +18,59 @@
       <button type="submit">Créer</button>
     </form>
   </div>
+
   <div class="projectContainer">
     <h2>Mes projets</h2>
     <ul>
       <li *ngFor="let project of projects">
-        <div class="projectCard">
-          <div>Project name : {{ project.name }}</div>
-          <div>Project started : {{ project.startDate }}</div>
-          <div>{{ project.description }}</div>
-        </div>
+        <div>{{ project.name }}</div>
+        <div>{{ project.startDate }}</div>
+        <div>{{ project.description }}</div>
+        <div (click)="openModal(project)">✏️</div>
       </li>
     </ul>
+  </div>
+
+  <!-- Modal unique -->
+  <div *ngIf="modalVisible" class="modal-backdrop"></div>
+  <div *ngIf="modalVisible" class="modal">
+    <h2>Modifier le projet</h2>
+    <label>
+      Nom :
+      <input type="text" [(ngModel)]="editProject.name" />
+    </label>
+    <label>
+      Date de début :
+      <input type="date" [(ngModel)]="editProject.startDate" />
+    </label>
+    <label>
+      Description :
+      <textarea rows="5" [(ngModel)]="editProject.description"></textarea>
+    </label>
+
+    <div class="modal-actions">
+      <button (click)="saveEdit()">Enregistrer</button>
+      <button
+        *ngIf="editProject.createBy === currentUserId"
+        (click)="deleteProject(editProject.id!)"
+      >
+        Supprimer
+      </button>
+
+      <hr />
+
+      <h3>Inviter un membre</h3>
+      <input [(ngModel)]="inviteEmail" placeholder="Email du membre" />
+      <select [(ngModel)]="inviteRole">
+        <option value="ADMIN">Administrateur</option>
+        <option value="MEMBER">Membre</option>
+        <option value="OBSERVER">Observateur</option>
+      </select>
+      <button (click)="inviteMember()">Envoyer invitation</button>
+
+      <hr />
+
+      <button (click)="closeModal()">Fermer</button>
+    </div>
   </div>
 </section>

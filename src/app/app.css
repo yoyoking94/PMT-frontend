@@ -1,5 +1,6 @@
 header {
-  padding: 1dvw;
+  height: 6dvh;
+  padding: 0 1dvw;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -25,6 +26,7 @@ header > button:hover {
 }
 
 main {
+  height: 88dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,4 +43,8 @@ h1 {
 
 router-outlet {
   width: 100%;
+}
+
+footer {
+  height: 6dvh;
 }

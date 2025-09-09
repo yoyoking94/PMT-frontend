@@ -6,7 +6,7 @@ export interface Project {
   id?: number;
   name: string;
   description?: string;
-  startDate: string; // format YYYY-MM-DD
+  startDate: string;
   createBy: number;
 }
 
@@ -24,5 +24,13 @@ export class ProjectService {
 
   createProject(project: Project): Observable<Project> {
     return this.http.post<Project>(this.apiUrl, project);
+  }
+
+  updateProject(projectId: number, project: Project): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/${projectId}`, project);
+  }
+
+  deleteProject(projectId: number, userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${projectId}?userId=${userId}`);
   }
 }
