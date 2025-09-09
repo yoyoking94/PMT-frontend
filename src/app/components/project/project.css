@@ -1,0 +1,119 @@
+.project {
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.creationPanel {
+  max-width: 400px;
+  margin: 0 auto 30px auto;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.creationPanel:hover {
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+}
+
+.creationPanel h3 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #0a74da;
+  text-align: center;
+}
+
+.creationPanel form input[type='text'],
+.creationPanel form input[type='date'],
+.creationPanel form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+.creationPanel form input[type='text']:focus,
+.creationPanel form input[type='date']:focus,
+.creationPanel form textarea:focus {
+  border-color: #0a74da;
+  outline: none;
+}
+
+.creationPanel form button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #0a74da;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.creationPanel form button:hover {
+  background-color: #084ea8;
+}
+
+.projectContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.projectContainer h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.projectContainer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+}
+
+.projectCard {
+  border-radius: 12px;
+  padding: 20px;
+  width: 280px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.projectCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.projectCard > div:first-child {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.projectCard > div:nth-child(2) {
+  font-style: italic;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.projectCard > div:last-child {
+  font-size: 1rem;
+  flex-grow: 1;
+  overflow: hidden;
+  text-align: center;
+}

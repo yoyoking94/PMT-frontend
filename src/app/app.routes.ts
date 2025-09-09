@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
-import { SigninComponent } from './auth/signin/signin';
-import { SignupComponent } from './auth/signup/signup';
-import { DashboardComponent } from './dashboard/dashboard';
+import { DashboardComponent } from './components/dashboard/dashboard';
+import { SigninComponent } from './components/auth/signin/signin';
+import { SignupComponent } from './components/auth/signup/signup';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'signin', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'dashboard', component: DashboardComponent },
-
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' }, // racine redirigée vers dashboard
+  { path: '**', redirectTo: '/dashboard' },
 ];

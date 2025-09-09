@@ -1,0 +1,33 @@
+<section class="project">
+  <div class="creationPanel">
+    <h3>Ajouter un projet</h3>
+    <form (ngSubmit)="addProject()">
+      <input
+        type="text"
+        [(ngModel)]="newProject.name"
+        name="name"
+        placeholder="Nom du projet"
+        required
+      />
+      <input type="date" [(ngModel)]="newProject.startDate" name="startDate" required />
+      <textarea
+        [(ngModel)]="newProject.description"
+        name="description"
+        placeholder="Description"
+      ></textarea>
+      <button type="submit">Créer</button>
+    </form>
+  </div>
+  <div class="projectContainer">
+    <h2>Mes projets</h2>
+    <ul>
+      <li *ngFor="let project of projects">
+        <div class="projectCard">
+          <div>Project name : {{ project.name }}</div>
+          <div>Project started : {{ project.startDate }}</div>
+          <div>{{ project.description }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

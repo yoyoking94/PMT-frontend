@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
@@ -30,5 +30,9 @@ export class SigninComponent {
         this.errorMsg = err.error?.message || 'Identifiants invalides ou erreur serveur.';
       },
     });
+  }
+
+  isOnSignup(): boolean {
+    return window.location.pathname === '/signup';
   }
 }

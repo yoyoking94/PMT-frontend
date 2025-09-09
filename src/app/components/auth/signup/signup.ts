@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
@@ -28,5 +29,9 @@ export class SignupComponent {
           this.message = err.error?.message || "Erreur lors de l'inscription.";
         },
       });
+  }
+
+  isOnSignin(): boolean {
+    return window.location.pathname === '/signin' || window.location.pathname === '/';
   }
 }

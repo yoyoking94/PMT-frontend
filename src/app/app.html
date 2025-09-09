@@ -1,11 +1,10 @@
+@if (username) {
+<header>
+  <h2>Hi {{ username }} !</h2>
+  <button (click)="logout()">⏻</button>
+</header>
+}
 <main>
-  <nav>
-    @if (isOnSignin()) {
-    <a routerLink="/signup" class="link-button">Inscrivez-vous</a>
-    } @if (isOnSignup()) {
-    <a routerLink="/signin" class="link-button">Connectez-vous</a>
-    }
-  </nav>
-
   <router-outlet></router-outlet>
 </main>
+<footer></footer>
