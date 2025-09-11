@@ -1,0 +1,81 @@
+<section class="project-edit">
+  <div style="position: relative; bottom: 20px; right: 70px">
+    <button style="border: none; background: none; font-size: 22px; cursor: pointer;" (click)="goToDashboard()">⬅️</button>
+  </div>
+  <h2>Modifier le projet</h2>
+
+  <div>
+    <label>
+      Nom :
+      <input type="text" [(ngModel)]="editProject.name" [disabled]="!canModifyProject()" />
+    </label>
+
+    <label>
+      Date de début :
+      <input type="date" [(ngModel)]="editProject.startDate" [disabled]="!canModifyProject()" />
+    </label>
+
+    <label>
+      Description :
+      <textarea
+        rows="5"
+        [(ngModel)]="editProject.description"
+        [disabled]="!canModifyProject()"
+      ></textarea>
+    </label>
+
+    <hr />
+  </div>
+
+  <div>
+    <h3>Membres du projet</h3>
+
+    <!-- Affiche la liste, mais boutons suppression cachés pour membres -->
+    <ul>
+      <li *ngFor="let member of members">
+        {{ member.user.username }} - {{ member.role }}
+        <button
+          *ngIf="canModifyProject()"
+          class="btn-remove-member"
+          (click)="removeMember(member.id)"
+        >
+          ×
+        </button>
+      </li>
+      <li *ngIf="members.length === 0">Aucun membre</li>
+    </ul>
+  </div>
+
+  <!-- Invitation uniquement pour modificateurs -->
+  <div *ngIf="canModifyProject()" style="margin-top: 1em">
+    <h3>Inviter un membre</h3>
+    <div style="display: flex">
+      <input
+        [(ngModel)]="inviteEmail"
+        (ngModelChange)="onInviteEmailChange()"
+        [class.input-invalid]="inviteErrorMessage"
+        placeholder="Email du membre"
+        style="flex-grow: 1"
+        type="email"
+      />
+      <select [(ngModel)]="inviteRole" style="width: 7rem; margin-left: 0.7em">
+        <option value="ADMIN">Admin</option>
+        <option value="MEMBER">Membre</option>
+        <option value="OBSERVER">Observateur</option>
+      </select>
+      <button
+        (click)="inviteMember()"
+        [disabled]="!inviteEmail || inviteErrorMessage"
+        style="margin-left: 0.7em"
+      >
+        ➕
+      </button>
+    </div>
+    <div *ngIf="inviteErrorMessage" class="error-message">{{ inviteErrorMessage }}</div>
+  </div>
+
+  <div class="actions">
+    <button *ngIf="canModifyProject()" (click)="saveEdit()">Enregistrer</button>
+    <button *ngIf="canModifyProject()" (click)="deleteProject()">Supprimer</button>
+  </div>
+</section>

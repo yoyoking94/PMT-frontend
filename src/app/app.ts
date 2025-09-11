@@ -29,8 +29,10 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.authService.username$.subscribe((name) => {
-      this.username = name;
+    this.authService.username$.subscribe({
+      next: (name) => {
+        this.username = name;
+      },
     });
   }
   logout() {

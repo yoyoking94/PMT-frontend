@@ -1,5 +1,6 @@
 header {
   height: 6dvh;
+  width: 100dvw;
   padding: 0 1dvw;
   display: flex;
   flex-direction: row;

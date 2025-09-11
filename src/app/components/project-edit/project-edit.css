@@ -1,0 +1,166 @@
+.project-edit {
+  max-width: 700px;
+  margin: 2rem auto;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 2rem 2.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.project-edit h2,
+.project-edit h3 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #2980b9;
+  padding-bottom: 0.3rem;
+}
+
+.project-edit label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  color: #34495e;
+}
+
+.project-edit input[type='text'],
+.project-edit input[type='date'],
+.project-edit textarea,
+.project-edit input[type='email'],
+.project-edit select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  border: 1.8px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 400;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+}
+
+.project-edit input[type='text']:focus,
+.project-edit input[type='date']:focus,
+.project-edit textarea:focus,
+.project-edit input[type='email']:focus,
+.project-edit select:focus {
+  border-color: #2980b9;
+  outline: none;
+}
+
+.project-edit textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.actions {
+  margin-top: 1.8rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.actions button {
+  width: 100%;
+  padding: 0.6rem 1.3rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.actions button:first-child {
+  background-color: #27ae60;
+  color: white;
+}
+
+.actions button:first-child:hover {
+  background-color: #219150;
+}
+
+.actions button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.actions button:last-child:hover {
+  background-color: #c0392b;
+}
+
+hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid #ecf0f1;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #e1e1e1;
+  font-size: 1rem;
+  color: #2c3e50;
+  user-select: none;
+}
+
+ul li:last-child {
+  border-bottom: none;
+}
+
+button.btn-remove-member {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0 8px;
+  user-select: none;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+button.btn-remove-member:hover {
+  color: #c0392b;
+}
+
+input.input-valid {
+  border-color: #27ae60;
+  box-shadow: 0 0 6px #27ae60aa;
+}
+
+input.input-invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 6px #e74c3caa;
+}
+
+.error-message {
+  margin-top: 0.4rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+button[disabled] {
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  color: #ecf0f1 !important;
+}

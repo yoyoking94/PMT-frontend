@@ -1,15 +1,8 @@
 <div class="login-form">
   <h2 class="loginFormH2">Connexion</h2>
   <form (ngSubmit)="onSubmit()" #f="ngForm">
-    <label for="username">Nom d'utilisateur</label>
-    <input
-      id="username"
-      type="text"
-      [(ngModel)]="username"
-      name="username"
-      required
-      placeholder="Entrez votre nom d'utilisateur"
-    />
+    <label for="username">@mail</label>
+    <input type="email" [(ngModel)]="email" name="email" placeholder="Entrez votre email" required />
 
     <label for="password">Mot de passe</label>
     <input

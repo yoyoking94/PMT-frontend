@@ -18,8 +18,10 @@ export class DashboardComponent implements OnInit {
   constructor(private projectService: ProjectService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.username$.subscribe((name: string | null) => {
-      this.username = name;
+    this.authService.username$.subscribe({
+      next: (name: string | null) => {
+        this.username = name;
+      },
     });
   }
 }

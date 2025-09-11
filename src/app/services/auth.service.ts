@@ -18,22 +18,25 @@ interface SigninData {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
+  private userApi = 'http://localhost:8080/api/users';
+
   private loggedInKey = 'loggedUser';
   private usernameSubject = new BehaviorSubject<string | null>(
     localStorage.getItem(this.loggedInKey)
   );
+  public username$: Observable<string | null> = this.usernameSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  signin(data: SigninData): Observable<any> {
+  signin(data: { email: string; password: string }): Observable<any> {
     return new Observable((observer) => {
       this.http
         .post<any>(`${this.apiUrl}/signin`, data, { responseType: 'json' as const })
         .subscribe({
           next: (response) => {
-            // Sauvegarder le nom d’utilisateur dans localStorage à la connexion
-            this.setLoggedUsername(data.username);
-            localStorage.setItem('userId', response.id); // <-- stocke l'id utilisateur !
+            // Enregistre email/ID dans le localStorage si besoin
+            this.setLoggedUsername(response.username); // ou .setLoggedUserEmail(response.email)
+            localStorage.setItem('userId', response.id);
             observer.next(response);
             observer.complete();
           },
@@ -48,8 +51,6 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/signup`, data);
   }
 
-  public username$: Observable<string | null> = this.usernameSubject.asObservable();
-
   setLoggedUsername(username: string) {
     localStorage.setItem(this.loggedInKey, username);
     this.usernameSubject.next(username); // Notifier changement
@@ -57,6 +58,10 @@ export class AuthService {
 
   getLoggedUsername(): string | null {
     return localStorage.getItem(this.loggedInKey);
+  }
+
+  checkEmail(email: string): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${this.userApi}/check-email`, { params: { email } });
   }
 
   logout() {

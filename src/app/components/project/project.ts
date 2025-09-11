@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Project, ProjectService } from '../../services/project.service';
+import { ProjectMemberService } from '../../services/project-member.service';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProjectMemberService } from '../../services/project-member.service';
 
 @Component({
   selector: 'app-projects',
@@ -13,98 +15,95 @@ import { ProjectMemberService } from '../../services/project-member.service';
 })
 export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
-  currentUserId: number = 0;
-
+  currentUserId = 0;
+  membersMap: { [projectId: number]: any[] } = {};
   newProject: Partial<Project> = { name: '', description: '', startDate: '' };
-
-  // Modal
-  modalVisible = false;
-  editProject: Project = { id: 0, name: '', description: '', startDate: '', createBy: 0 };
-
-  // Invitation
-  inviteEmail = '';
-  inviteRole = 'MEMBER';
 
   constructor(
     private projectService: ProjectService,
-    private projectMemberService: ProjectMemberService
+    private memberService: ProjectMemberService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    const userIdStr = localStorage.getItem('userId');
-    this.currentUserId = userIdStr ? Number(userIdStr) : 0;
+    const idStr = localStorage.getItem('userId');
+    this.currentUserId = idStr ? Number(idStr) : 0;
     this.loadProjects();
   }
 
-  loadProjects() {
-    this.projectService.getProjects().subscribe((data) => (this.projects = data));
-  }
-
-  addProject() {
+  addProject(): void {
     if (!this.newProject.name || !this.newProject.startDate) {
       alert('Veuillez remplir nom et date');
       return;
     }
-
-    const project: Project = {
+    const proj: Project = {
       name: this.newProject.name!,
       description: this.newProject.description,
       startDate: this.newProject.startDate!,
       createBy: this.currentUserId,
     };
-
-    this.projectService.createProject(project).subscribe(() => {
-      this.newProject = { name: '', description: '', startDate: '' };
-      this.loadProjects();
+    this.projectService.createProject(proj).subscribe({
+      next: () => {
+        this.newProject = { name: '', description: '', startDate: '' };
+        this.loadProjects();
+      },
     });
   }
 
-  openModal(project: Project) {
-    this.editProject = { ...project };
-    this.inviteEmail = '';
-    this.inviteRole = 'MEMBER';
-    this.modalVisible = true;
-  }
+  loadProjects() {
+    this.projectService.getProjects().subscribe({
+      next: (data) => {
+        this.projects = data;
 
-  closeModal() {
-    this.modalVisible = false;
-  }
-
-  saveEdit() {
-    this.projectService.updateProject(this.editProject.id!, this.editProject).subscribe(
-      () => {
-        this.loadProjects();
-        this.closeModal();
+        // Pour chaque projet charge les membres et stocke dans membersMap
+        data.forEach((proj) => {
+          this.memberService.getProjectMembers(proj.id!).subscribe({
+            next: (members) => {
+              this.membersMap[proj.id!] = members.map((m) => ({
+                role: m.role,
+                userId: m.user.id,
+              }));
+            },
+            error: () => {
+              this.membersMap[proj.id!] = [];
+            },
+          });
+        });
       },
-      () => alert('Erreur lors de la mise à jour')
-    );
+    });
   }
 
-  deleteProject(projectId: number) {
-    if (!confirm('Confirmer la suppression ?')) return;
-    this.projectService.deleteProject(projectId, this.currentUserId).subscribe(
-      () => {
-        this.loadProjects();
-        this.closeModal();
-      },
-      (err) => alert(err.error || 'Erreur lors de la suppression')
-    );
-  }
-
-  inviteMember() {
-    if (!this.inviteEmail) {
-      alert('Veuillez saisir un email');
-      return;
+  canAccessProject(project: Project, action: 'edit' | 'view'): boolean {
+    // L'admin et le créateur du projet peuvent éditer
+    if (action === 'edit') {
+      if (project.createBy === this.currentUserId) return true;
+      const members = this.membersMap[project.id!];
+      return members
+        ? members.some((m) => m.userId === this.currentUserId && m.role === 'ADMIN')
+        : false;
     }
-    this.projectMemberService
-      .inviteMember(this.editProject.id!, this.inviteEmail, this.inviteRole, this.currentUserId)
-      .subscribe(
-        () => {
-          alert('Invitation envoyée');
-          this.inviteEmail = '';
-          this.inviteRole = 'MEMBER';
-        },
-        (err) => alert("Erreur lors de l'invitation")
-      );
+
+    // Pour la vue, les rôles admin, member ou créateur ont accès
+    if (action === 'view') {
+      if (project.createBy === this.currentUserId) return true;
+      const members = this.membersMap[project.id!];
+      return members
+        ? members.some(
+            (m) => m.userId === this.currentUserId && (m.role === 'ADMIN' || m.role === 'MEMBER')
+          )
+        : false;
+    }
+
+    return false;
+  }
+
+  openEdit(project: Project) {
+    // Autoriser si droit edit OU view (ex : membres simples)
+    if (this.canAccessProject(project, 'edit') || this.canAccessProject(project, 'view')) {
+      this.router.navigate(['/project-edit', project.id]);
+    } else {
+      console.error('Accès refusé au projet');
+      // Optionnel : afficher un message user-friendly
+    }
   }
 }

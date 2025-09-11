@@ -12,17 +12,16 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './signin.css',
 })
 export class SigninComponent {
-  username = '';
+  email = '';
   password = '';
   errorMsg = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.authService.signin({ username: this.username, password: this.password }).subscribe({
+    this.authService.signin({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        console.log('Connexion réussie !');
-        this.authService.setLoggedUsername(this.username); // Stocke le username
+        this.authService.setLoggedUsername(response.username);
         this.errorMsg = '';
         this.router.navigate(['/dashboard']);
       },
