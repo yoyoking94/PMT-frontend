@@ -42,12 +42,12 @@
           ×
         </button>
       </li>
-      <li *ngIf="members.length === 0">Aucun membre</li>
+      @if (members.length === 0) {<li>Aucun membre</li>}
     </ul>
   </div>
 
   <!-- Invitation uniquement pour modificateurs -->
-  <div *ngIf="canModifyProject()" style="margin-top: 1em">
+  @if (canModifyProject()) {<div style="margin-top: 1em">
     <h3>Inviter un membre</h3>
     <div style="display: flex">
       <input
@@ -71,11 +71,11 @@
         ➕
       </button>
     </div>
-    <div *ngIf="inviteErrorMessage" class="error-message">{{ inviteErrorMessage }}</div>
-  </div>
+    @if (inviteErrorMessage) {<div class="error-message">{{ inviteErrorMessage }}</div>}
+  </div>}
 
   <div class="actions">
-    <button *ngIf="canModifyProject()" (click)="saveEdit()">Enregistrer</button>
-    <button *ngIf="canModifyProject()" (click)="deleteProject()">Supprimer</button>
+    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>}
+    @if (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
   </div>
 </section>

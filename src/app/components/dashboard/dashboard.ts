@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Project, ProjectService } from '../../services/project.service';
+import { Project, ProjectService } from '../../services/project/project';
 import { AuthService } from '../../services/auth.service';
 import { ProjectsComponent } from '../project/project';
 

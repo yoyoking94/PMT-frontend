@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectService, Project } from '../../services/project.service';
-import { ProjectMemberService } from '../../services/project-member.service';
+import { ProjectService, Project } from '../../services/project/project';
+import { ProjectMemberService } from '../../services/project-member/project-member';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
