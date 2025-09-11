@@ -4,6 +4,7 @@ import { ProjectService, Project } from '../../services/project/project';
 import { ProjectMemberService } from '../../services/project-member/project-member';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Task, TaskService } from '../../services/task/task';
 
 @Component({
   selector: 'app-project-edit',
@@ -27,12 +28,22 @@ export class ProjectEditComponent implements OnInit {
   inviteRole = 'MEMBER';
   members: any[] = [];
 
+  tasks: Task[] = [];
+  newTask: Partial<Task> = {
+    name: '',
+    description: '',
+    dueDate: '',
+    priority: 'MEDIUM',
+    project: { id: 0 },
+  };
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private projectService: ProjectService,
     private projectMemberService: ProjectMemberService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private taskService: TaskService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +68,8 @@ export class ProjectEditComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
     });
+
+    this.loadTasks();
   }
 
   loadProjectMembers() {
@@ -68,6 +81,42 @@ export class ProjectEditComponent implements OnInit {
       error: () => {
         this.members = [];
         this.cdr.detectChanges();
+      },
+    });
+  }
+
+  loadTasks() {
+    if (!this.editProject.id) return;
+    this.taskService.getTasksByProject(this.editProject.id).subscribe({
+      next: (tasks) => {
+        this.tasks = tasks;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.tasks = [];
+      },
+    });
+  }
+
+  addTask() {
+    if (!this.newTask.name || !this.newTask.dueDate) {
+      alert("Le nom et la date d'échéance sont obligatoires.");
+      return;
+    }
+    this.newTask.project!.id = this.editProject.id!;
+    this.taskService.createTask(this.newTask as Task).subscribe({
+      next: () => {
+        this.newTask = {
+          name: '',
+          description: '',
+          dueDate: '',
+          priority: 'MEDIUM',
+          project: { id: this.editProject.id! },
+        };
+        this.loadTasks();
+      },
+      error: () => {
+        alert('Erreur lors de la création de la tâche');
       },
     });
   }
@@ -95,13 +144,13 @@ export class ProjectEditComponent implements OnInit {
   }
 
   deleteProject() {
-    if (!confirm('Confirmer la suppression ?')) return;
     this.projectService.deleteProject(this.editProject.id!, this.currentUserId).subscribe({
       next: () => {
-        alert('Projet supprimé');
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => alert(err.error || 'Erreur lors de la suppression'),
+      error: (err) => {
+        alert(err.error || 'Erreur lors de la suppression'), console.error(err);
+      },
     });
   }
 

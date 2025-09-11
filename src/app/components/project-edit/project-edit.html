@@ -1,6 +1,11 @@
 <section class="project-edit">
   <div style="position: relative; bottom: 20px; right: 70px">
-    <button style="border: none; background: none; font-size: 22px; cursor: pointer;" (click)="goToDashboard()">⬅️</button>
+    <button
+      style="border: none; background: none; font-size: 22px; cursor: pointer"
+      (click)="goToDashboard()"
+    >
+      ⬅️
+    </button>
   </div>
   <h2>Modifier le projet</h2>
 
@@ -26,6 +31,41 @@
 
     <hr />
   </div>
+  <div>
+    <h3>Tâches</h3>
+    <ul>
+      <li *ngFor="let task of tasks; trackBy: trackByTaskId">
+        <strong>{{ task.name }}</strong> — due {{ task.dueDate }} — priority: {{ task.priority }}
+        <p>{{ task.description }}</p>
+      </li>
+      <li *ngIf="tasks.length === 0">Pas encore de tâche</li>
+    </ul>
+
+    <h4>Ajouter une tâche</h4>
+    <form (ngSubmit)="addTask()" *ngIf="canModifyProject()">
+      <label>
+        Nom :
+        <input type="text" [(ngModel)]="newTask.name" name="name" required />
+      </label>
+      <label>
+        Description :
+        <textarea [(ngModel)]="newTask.description" name="description"></textarea>
+      </label>
+      <label>
+        Date d'échéance :
+        <input type="date" [(ngModel)]="newTask.dueDate" name="dueDate" required />
+      </label>
+      <label>
+        Priorité :
+        <select [(ngModel)]="newTask.priority" name="priority">
+          <option value="LOW">Basse</option>
+          <option value="MEDIUM" selected>Moyenne</option>
+          <option value="HIGH">Haute</option>
+        </select>
+      </label>
+      <button type="submit">Ajouter</button>
+    </form>
+  </div>
 
   <div>
     <h3>Membres du projet</h3>
@@ -42,12 +82,15 @@
           ×
         </button>
       </li>
-      @if (members.length === 0) {<li>Aucun membre</li>}
+      @if (members.length === 0) {
+      <li>Aucun membre</li>
+      }
     </ul>
   </div>
 
   <!-- Invitation uniquement pour modificateurs -->
-  @if (canModifyProject()) {<div style="margin-top: 1em">
+  @if (canModifyProject()) {
+  <div style="margin-top: 1em">
     <h3>Inviter un membre</h3>
     <div style="display: flex">
       <input
@@ -71,11 +114,14 @@
         ➕
       </button>
     </div>
-    @if (inviteErrorMessage) {<div class="error-message">{{ inviteErrorMessage }}</div>}
-  </div>}
+    @if (inviteErrorMessage) {
+    <div class="error-message">{{ inviteErrorMessage }}</div>
+    }
+  </div>
+  }
 
   <div class="actions">
-    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>}
-    @if (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
+    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>} @if
+    (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
   </div>
 </section>
