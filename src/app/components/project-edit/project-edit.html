@@ -34,15 +34,17 @@
   <div>
     <h3>Tâches</h3>
     <ul>
-      <li *ngFor="let task of tasks; trackBy: trackByTaskId">
+      @for (task of tasks; track $index) {
+      <li>
         <strong>{{ task.name }}</strong> — due {{ task.dueDate }} — priority: {{ task.priority }}
         <p>{{ task.description }}</p>
       </li>
-      <li *ngIf="tasks.length === 0">Pas encore de tâche</li>
+      }
+      @if (tasks.length === 0) {<li>Pas encore de tâche</li>}
     </ul>
 
     <h4>Ajouter une tâche</h4>
-    <form (ngSubmit)="addTask()" *ngIf="canModifyProject()">
+    @if (canModifyProject()) {<form (ngSubmit)="addTask()">
       <label>
         Nom :
         <input type="text" [(ngModel)]="newTask.name" name="name" required />
@@ -64,7 +66,7 @@
         </select>
       </label>
       <button type="submit">Ajouter</button>
-    </form>
+    </form>}
   </div>
 
   <div>
@@ -72,16 +74,17 @@
 
     <!-- Affiche la liste, mais boutons suppression cachés pour membres -->
     <ul>
-      <li *ngFor="let member of members">
+      @for (member of members; track member.id) {
+      <li>
         {{ member.user.username }} - {{ member.role }}
-        <button
-          *ngIf="canModifyProject()"
+        @if (canModifyProject()) {<button
           class="btn-remove-member"
           (click)="removeMember(member.id)"
         >
           ×
-        </button>
+        </button>}
       </li>
+      }
       @if (members.length === 0) {
       <li>Aucun membre</li>
       }

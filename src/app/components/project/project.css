@@ -1,94 +1,160 @@
-/* Container général */
+/* Container principal */
 .project {
-  max-width: 900px;
+  max-width: 80dvw;
   margin: 0 auto;
   color: #2c3e50;
   padding: 0 20px;
-  height: calc(90dvh - 120px); /* Réduction pour header + margin + paddings */
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Section ajout projet */
-.creationPanel {
-  background-color: #f7f9fc;
-  border: 1px solid #e1e8f0;
-  border-radius: 8px;
-  padding: 20px 25px;
-  box-shadow: 0 3px 8px rgb(0 0 0 / 0.05);
-  margin-bottom: 20px;
-  flex-shrink: 0; /* Ne rétrécit pas */
-}
-
-/* Titre ajout projet */
-.creationPanel h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.5em;
-  color: #1e88e5;
-  font-weight: 600;
-}
-
-/* Formulaire inputs */
-.creationPanel form input[type='text'],
-.creationPanel form input[type='date'],
-.creationPanel form textarea {
-  width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1.8px solid #d6dbdf;
-  font-size: 1em;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;
+  gap: 28px;
   font-family: inherit;
 }
 
-.creationPanel form input[type='text']:focus,
-.creationPanel form input[type='date']:focus,
-.creationPanel form textarea:focus {
+/* 1. Barre de création projet sur une ligne */
+.creationPanel.one-line form {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-end;
+  background-color: #f7f9fc;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+  padding: 18px 20px 14px 20px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.04);
+}
+
+/* Inputs et textarea */
+.creationPanel input[type='text'],
+.creationPanel input[type='date'],
+.creationPanel textarea {
+  padding: 10px 12px;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1.5px solid #d6dbdf;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  margin-bottom: 0;
+}
+
+.creationPanel input[type='text']:focus,
+.creationPanel input[type='date']:focus,
+.creationPanel textarea:focus {
   border-color: #1e88e5;
   outline: none;
   box-shadow: 0 0 5px #80b3ff88;
 }
 
-.creationPanel form textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: inherit;
+.creationPanel textarea {
+  min-height: 38px;
+  max-height: 54px;
+  resize: none;
 }
 
-/* Bouton création projet */
-.creationPanel form button {
+/* Bouton création */
+.creationPanel button[type='submit'] {
   background-color: #1e88e5;
-  color: white;
+  color: #fff;
   font-weight: 600;
-  padding: 12px 22px;
   border: none;
   border-radius: 6px;
+  padding: 9px 20px;
+  font-size: 1.05em;
   cursor: pointer;
-  font-size: 1.1em;
-  transition: background-color 0.25s ease;
+  transition: background-color 0.18s;
 }
 
-.creationPanel form button:hover {
+.creationPanel button[type='submit']:hover {
   background-color: #1565c0;
 }
 
-/* Conteneur scrollable pour la liste projets */
+/* 2. Slider horizontal pour projets utilisateur */
+.sliderPanel {
+  width: 100%;
+  margin: 0 0 25px 0;
+}
+
+.sliderTitle {
+  font-weight: 600;
+  color: #2354c2;
+  margin-bottom: 5px;
+  font-size: 1.08em;
+  padding-left: 4px;
+}
+
+.slider {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.sliderItem {
+  position: relative;
+  width: 250px;
+  height: 100px;
+  background: #eaf2fd;
+  border: 1.5px solid #b0c7e3;
+  border-radius: 9px;
+  padding: 14px 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1.5px 4px #c5def8bb;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.sliderItem:hover {
+  background: #d2e5fa;
+}
+
+.emojiContainer {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  pointer-events: none;
+}
+
+.emoji {
+  font-size: 18px;
+  line-height: 1;
+  user-select: none;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.sliderName {
+  font-weight: 600;
+  font-size: 1.05em;
+  margin-bottom: 3px;
+  color: #2550a8;
+  word-break: break-word;
+}
+.sliderDesc {
+  font-size: 0.97em;
+  color: #38567d;
+  word-break: break-word;
+}
+.sliderEmpty {
+  color: #888;
+  background: #f3f4f7;
+  border: none;
+  min-width: 130px;
+}
+
+/* 3. Liste complète de tous les projets */
 .projectContainer {
-  overflow-y: auto; /* scroll vertical uniquement */
+  width: 100%;
+  overflow-y: auto;
   border: 1px solid #e1e8f0;
   border-radius: 8px;
   padding: 20px 25px;
-  background-color: white;
-  box-shadow: 0 3px 8px rgb(0 0 0 / 0.05);
-  flex-grow: 1; /* Prend toute la hauteur disponible */
-  min-height: 0; /* Important pour permettre le scroll dans un flex container */
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.04);
+  min-height: 0;
 }
 
-/* Titre liste projets */
 .projectContainer h2 {
   color: #33475b;
   font-weight: 700;
@@ -98,48 +164,79 @@
   padding-bottom: 6px;
 }
 
-/* Liste projets */
 .projectContainer ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Item projet */
+/* Projets individuels sous forme de carte grille */
 .projectContainer ul li {
   display: grid;
   grid-template-columns: 2fr 1.2fr 3fr 40px;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #d9dfe6;
+  background: #fff;
+  border: 1.5px solid #d9dfe6;
   border-radius: 8px;
-  padding: 15px 20px;
-  margin-bottom: 15px;
+  padding: 14px 18px;
+  margin-bottom: 13px;
   box-shadow: 0 2px 5px rgb(0 0 0 / 0.04);
-  transition: box-shadow 0.25s ease;
+  transition: box-shadow 0.23s;
 }
-
 .projectContainer ul li:hover {
-  box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.12);
 }
-
 .projectContainer ul li div {
   overflow-wrap: break-word;
   font-size: 1em;
   color: #2c3e50;
 }
 
-/* Bouton Edit (icône) */
-.projectContainer ul li div:nth-child(4) {
-  cursor: pointer;
-  font-size: 1.6em;
-  color: #1e88e5;
-  user-select: none;
-  transition: color 0.3s ease;
-}
-
+/* Boutons edit et accéder */
 .projectContainer button {
   border: none;
   background: none;
   cursor: pointer;
+  font-size: 1.27em;
+  color: #1e88e5;
+  transition: color 0.22s;
+  user-select: none;
+  padding: 0 3px;
+}
+.projectContainer button:hover {
+  color: #195c9a;
+}
+
+/* Responsive Adaptations */
+@media (max-width: 880px) {
+  .projectContainer ul li {
+    grid-template-columns: 2fr 1.25fr 2fr 40px;
+    padding: 11px 8px;
+  }
+  .projectContainer {
+    padding: 16px 7px;
+  }
+  .sliderItem {
+    min-width: 120px;
+    max-width: 180px;
+    padding: 11px 7px;
+  }
+}
+
+@media (max-width: 600px) {
+  .project {
+    padding: 0 3vw;
+  }
+  .creationPanel.one-line form {
+    flex-direction: column;
+    gap: 9px;
+  }
+  .sliderPanel {
+    padding-left: 0;
+  }
+  .projectContainer ul li {
+    grid-template-columns: 1.7fr 1fr 2fr 30px;
+    font-size: 0.97em;
+    padding: 8px 4px;
+  }
 }

@@ -5,6 +5,7 @@ import { ProjectMemberService } from '../../services/project-member/project-memb
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-projects',
@@ -18,6 +19,7 @@ export class ProjectsComponent implements OnInit {
   currentUserId = 0;
   membersMap: { [projectId: number]: any[] } = {};
   newProject: Partial<Project> = { name: '', description: '', startDate: '' };
+  userProjects: Project[] = [];
 
   constructor(
     private projectService: ProjectService,
@@ -55,18 +57,29 @@ export class ProjectsComponent implements OnInit {
       next: (data) => {
         this.projects = data;
 
-        // Pour chaque projet charge les membres et stocke dans membersMap
-        data.forEach((proj) => {
-          this.memberService.getProjectMembers(proj.id!).subscribe({
-            next: (members) => {
-              this.membersMap[proj.id!] = members.map((m) => ({
-                role: m.role,
-                userId: m.user.id,
-              }));
-            },
-            error: () => {
-              this.membersMap[proj.id!] = [];
-            },
+        // Crée une liste d'observables getProjectMembers pour chaque projet
+        const memberObservables = data.map((proj) =>
+          this.memberService.getProjectMembers(proj.id!).pipe(
+            map((members) => ({
+              projectId: proj.id,
+              members: members.map((m) => ({ role: m.role, userId: m.user.id })),
+            }))
+          )
+        );
+
+        forkJoin(memberObservables).subscribe((results) => {
+          // Remplit membersMap avec toutes les données reçues
+          results.forEach((r) => {
+            this.membersMap[r.projectId!] = r.members;
+          });
+
+          // Maintenant on calcule userProjects avec tous les members disponibles
+          this.userProjects = this.projects.filter((proj) => {
+            if (proj.createBy === this.currentUserId) return true;
+            const members = this.membersMap[proj.id!] || [];
+            return members.some(
+              (m) => ['ADMIN', 'MEMBER'].includes(m.role) && m.userId === this.currentUserId
+            );
           });
         });
       },
@@ -105,5 +118,9 @@ export class ProjectsComponent implements OnInit {
       console.error('Accès refusé au projet');
       // Optionnel : afficher un message user-friendly
     }
+  }
+
+  trackByProjectId(index: number, project: Project): any {
+    return project.id;
   }
 }

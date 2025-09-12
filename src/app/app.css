@@ -27,7 +27,7 @@ header > button:hover {
 }
 
 main {
-  height: 88dvh;
+  min-height: 88dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
