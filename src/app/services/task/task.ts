@@ -27,4 +27,13 @@ export class TaskService {
   createTask(task: Task): Observable<Task> {
     return this.http.post<Task>(this.apiUrl, task);
   }
+
+  updateTask(task: Task): Observable<Task> {
+    if (!task.id) {
+      throw new Error('Task id is required for update');
+    }
+    // Ici on suppose que tu ajoutes le paramètre userId par query string (adapter le backend si besoin)
+    const userId = localStorage.getItem('userId');
+    return this.http.put<Task>(`${this.apiUrl}/${task.id}?userId=${userId}`, task);
+  }
 }

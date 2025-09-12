@@ -1,130 +1,142 @@
+<div class="back-button">
+  <button (click)="goToDashboard()">⬅</button>
+</div>
 <section class="project-edit">
-  <div style="position: relative; bottom: 20px; right: 70px">
-    <button
-      style="border: none; background: none; font-size: 22px; cursor: pointer"
-      (click)="goToDashboard()"
-    >
-      ⬅️
-    </button>
-  </div>
-  <h2>Modifier le projet</h2>
-
+  <h2>Modifier projet</h2>
   <div>
-    <label>
-      Nom :
-      <input type="text" [(ngModel)]="editProject.name" [disabled]="!canModifyProject()" />
-    </label>
-
-    <label>
-      Date de début :
-      <input type="date" [(ngModel)]="editProject.startDate" [disabled]="!canModifyProject()" />
-    </label>
-
-    <label>
-      Description :
-      <textarea
-        rows="5"
-        [(ngModel)]="editProject.description"
-        [disabled]="!canModifyProject()"
-      ></textarea>
-    </label>
-
-    <hr />
-  </div>
-  <div>
-    <h3>Tâches</h3>
-    <ul>
-      @for (task of tasks; track $index) {
-      <li>
-        <strong>{{ task.name }}</strong> — due {{ task.dueDate }} — priority: {{ task.priority }}
-        <p>{{ task.description }}</p>
-      </li>
-      }
-      @if (tasks.length === 0) {<li>Pas encore de tâche</li>}
-    </ul>
-
-    <h4>Ajouter une tâche</h4>
-    @if (canModifyProject()) {<form (ngSubmit)="addTask()">
+    <div class="project-edit-info">
       <label>
         Nom :
-        <input type="text" [(ngModel)]="newTask.name" name="name" required />
+        <input type="text" [(ngModel)]="editProject.name" [disabled]="!canModifyProject()" />
+      </label>
+      <label>
+        Date début :
+        <input type="date" [(ngModel)]="editProject.startDate" [disabled]="!canModifyProject()" />
       </label>
       <label>
         Description :
-        <textarea [(ngModel)]="newTask.description" name="description"></textarea>
+        <textarea
+          [(ngModel)]="editProject.description"
+          [disabled]="!canModifyProject()"
+          rows="4"
+        ></textarea>
       </label>
-      <label>
-        Date d'échéance :
-        <input type="date" [(ngModel)]="newTask.dueDate" name="dueDate" required />
+    </div>
+    <div class="project-edit-member">
+      <h3>Membres</h3>
+      <ul>
+        <li *ngFor="let member of members; trackBy: trackByMemberId">
+          {{ member.user.username }} - {{ member.role }}
+          <button
+            *ngIf="canModifyProject()"
+            class="remove-member-btn"
+            (click)="removeMember(member.id)"
+          >
+            ×
+          </button>
+        </li>
+        <li *ngIf="members.length === 0">Aucun membre</li>
+      </ul>
+
+      <div *ngIf="canModifyProject()" class="invite-section">
+        <h4>Inviter membre</h4>
+        <div style="display: flex">
+          <input
+            style="flex: 2"
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="inviteEmail"
+            (ngModelChange)="onInviteEmailChange()"
+            [class.invalid]="inviteErrorMessage"
+          />
+          <select [(ngModel)]="inviteRole" style="flex: 1">
+            <option value="ADMIN">Admin</option>
+            <option value="MEMBER">Membre</option>
+            <option value="OBSERVER">Observateur</option>
+          </select>
+        </div>
+        <button
+          class="remove-member-btn"
+          [disabled]="!inviteEmail || inviteErrorMessage"
+          (click)="inviteMember()"
+        >
+          Inviter
+        </button>
+        <div class="error" *ngIf="inviteErrorMessage">{{ inviteErrorMessage }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="project-edit-task">
+    <h3>Tâches</h3>
+    <div class="project-edit-task-list">
+      <div *ngFor="let task of tasks" class="task-item" [attr.data-task-id]="task.id">
+        <div>
+          <span *ngIf="editingTaskId !== task.id">{{ task.name }}</span>
+          <input *ngIf="editingTaskId === task.id" [(ngModel)]="task.name" type="text" />
+
+          <span *ngIf="editingTaskId !== task.id" style="margin: 0 10px">{{
+            task.description
+          }}</span>
+          <textarea *ngIf="editingTaskId === task.id" [(ngModel)]="task.description"></textarea>
+
+          <span *ngIf="editingTaskId !== task.id">à faire avant le {{ task.dueDate }}</span>
+          <input *ngIf="editingTaskId === task.id" type="date" [(ngModel)]="task.dueDate" />
+
+          <span *ngIf="editingTaskId !== task.id">{{ task.priority }}</span>
+          <select *ngIf="editingTaskId === task.id" [(ngModel)]="task.priority">
+            <option value="LOW">Basse</option>
+            <option value="MEDIUM">Moyenne</option>
+            <option value="HIGH">Haute</option>
+          </select>
+        </div>
+        <div>
+          <!-- Bouton toggle Edit / Save -->
+          <button
+            *ngIf="editingTaskId !== task.id && canEditTask(task)"
+            (click)="editingTaskId = task.id"
+          >
+            ✏️
+          </button>
+
+          <button
+            *ngIf="editingTaskId === task.id"
+            (click)="editingTaskId = null"
+            style="background-color: #e74c3c"
+          >
+            X
+          </button>
+          <button *ngIf="editingTaskId === task.id" (click)="saveTask(task); editingTaskId = null">
+            O
+          </button>
+        </div>
+      </div>
+    </div>
+    <form *ngIf="canModifyProject()" (ngSubmit)="addTask()" class="new-task-form">
+      <label
+        >Nom :
+        <input type="text" [(ngModel)]="newTask.name" name="newTaskName" required />
       </label>
-      <label>
-        Priorité :
-        <select [(ngModel)]="newTask.priority" name="priority">
+      <label
+        >Description :
+        <textarea [(ngModel)]="newTask.description" name="newTaskDescription"></textarea>
+      </label>
+      <label
+        >Échéance :
+        <input type="date" [(ngModel)]="newTask.dueDate" name="newTaskDueDate" required />
+      </label>
+      <label
+        >Priorité :
+        <select [(ngModel)]="newTask.priority" name="newTaskPriority">
           <option value="LOW">Basse</option>
           <option value="MEDIUM" selected>Moyenne</option>
           <option value="HIGH">Haute</option>
         </select>
       </label>
-      <button type="submit">Ajouter</button>
-    </form>}
+      <button type="submit">Ajouter tâche</button>
+    </form>
   </div>
-
-  <div>
-    <h3>Membres du projet</h3>
-
-    <!-- Affiche la liste, mais boutons suppression cachés pour membres -->
-    <ul>
-      @for (member of members; track member.id) {
-      <li>
-        {{ member.user.username }} - {{ member.role }}
-        @if (canModifyProject()) {<button
-          class="btn-remove-member"
-          (click)="removeMember(member.id)"
-        >
-          ×
-        </button>}
-      </li>
-      }
-      @if (members.length === 0) {
-      <li>Aucun membre</li>
-      }
-    </ul>
-  </div>
-
-  <!-- Invitation uniquement pour modificateurs -->
-  @if (canModifyProject()) {
-  <div style="margin-top: 1em">
-    <h3>Inviter un membre</h3>
-    <div style="display: flex">
-      <input
-        [(ngModel)]="inviteEmail"
-        (ngModelChange)="onInviteEmailChange()"
-        [class.input-invalid]="inviteErrorMessage"
-        placeholder="Email du membre"
-        style="flex-grow: 1"
-        type="email"
-      />
-      <select [(ngModel)]="inviteRole" style="width: 7rem; margin-left: 0.7em">
-        <option value="ADMIN">Admin</option>
-        <option value="MEMBER">Membre</option>
-        <option value="OBSERVER">Observateur</option>
-      </select>
-      <button
-        (click)="inviteMember()"
-        [disabled]="!inviteEmail || inviteErrorMessage"
-        style="margin-left: 0.7em"
-      >
-        ➕
-      </button>
-    </div>
-    @if (inviteErrorMessage) {
-    <div class="error-message">{{ inviteErrorMessage }}</div>
-    }
-  </div>
-  }
-
   <div class="actions">
-    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>} @if
-    (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
+    <button *ngIf="canModifyProject()" (click)="saveEdit()">Enregistrer</button>
+    <button *ngIf="canModifyProject()" (click)="deleteProject()">Supprimer</button>
   </div>
 </section>

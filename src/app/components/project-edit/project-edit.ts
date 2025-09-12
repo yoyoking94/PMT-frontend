@@ -58,6 +58,7 @@ export class ProjectEditComponent implements OnInit {
         if (project) {
           this.editProject = { ...project };
           this.loadProjectMembers();
+          this.loadTasks();
         } else {
           alert('Projet non trouvé');
           this.router.navigate(['/dashboard']);
@@ -118,6 +119,24 @@ export class ProjectEditComponent implements OnInit {
       error: () => {
         alert('Erreur lors de la création de la tâche');
       },
+    });
+  }
+
+  editingTaskId: number | null | undefined = null;
+
+  canEditTask(task: Task): boolean {
+    if (this.canModifyProject()) return true;
+    return task.assignedTo === this.currentUserId;
+  }
+
+  saveTask(task: Task) {
+    this.taskService.updateTask(task).subscribe({
+      next: () => {
+        alert('Tâche mise à jour');
+        this.loadTasks();
+        this.editingTaskId = null;
+      },
+      error: () => alert('Erreur lors de la mise à jour de la tâche'),
     });
   }
 
@@ -229,5 +248,9 @@ export class ProjectEditComponent implements OnInit {
 
   trackByMemberId(index: number, member: any): number {
     return member.id;
+  }
+
+  trackByTaskId(index: number, task: any): number {
+    return task.id!;
   }
 }

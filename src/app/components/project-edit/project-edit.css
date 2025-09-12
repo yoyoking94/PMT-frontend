@@ -1,165 +1,300 @@
-.project-edit {
-  width: 700px;
-  margin: 2rem auto;
-  background-color: #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  padding: 2rem 2.5rem;
-  color: #333;
+.back-button {
+  position: relative;
+  top: 10px;
+  right: 50px;
 }
 
-.project-edit h2,
-.project-edit h3 {
-  margin-bottom: 1rem;
+.back-button button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.project-edit {
+  width: 90vw;
+}
+
+.project-edit > *:nth-child(2) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.project-edit-info,
+.project-edit-member,
+.project-edit-task-list,
+.new-task-form {
+  background-color: #fafafa;
+  margin: 10px;
+  padding: 10px;
+
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-y: auto;
+}
+.project-edit-info {
+  height: 350px;
+  flex: 2;
+}
+
+.project-edit-member {
+  height: 350px;
+  flex: 1;
+}
+
+.project-edit-task {
+  flex: 1;
+}
+
+h2,
+h3,
+h4 {
   font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #2980b9;
+  margin-bottom: 1rem;
   padding-bottom: 0.3rem;
 }
 
-.project-edit label {
+label {
   display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
+  margin: 1rem 0 0.6rem 0;
+  font-weight: 600;
   color: #34495e;
 }
 
-.project-edit input[type='text'],
-.project-edit input[type='date'],
-.project-edit textarea,
-.project-edit input[type='email'],
-.project-edit select {
+input[type='text'],
+input[type='date'],
+input[type='email'],
+textarea,
+select {
+  font-size: 1rem;
+  min-height: 54px;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit;
+  border-radius: 6px;
+  border: 1.8px solid #bdc7c7;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem 0.75rem;
-  border: 1.8px solid #bdc3c7;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 400;
   transition: border-color 0.3s ease;
-  outline-offset: 2px;
 }
 
-.project-edit input[type='text']:focus,
-.project-edit input[type='date']:focus,
-.project-edit textarea:focus,
-.project-edit input[type='email']:focus,
-.project-edit select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: #2980b9;
   outline: none;
+  box-shadow: 0 0 6px #2980b988;
 }
 
-.project-edit textarea {
-  resize: vertical;
+textarea {
   min-height: 100px;
+  resize: vertical;
 }
 
-.actions {
-  margin-top: 1.8rem;
+.project-edit-member ul {
+  list-style: none;
+  margin-top: 0.6rem;
+  padding: 0;
+}
+
+.project-edit-member li {
+  padding: 6px 10px;
+  border-bottom: 1px solid #ddd;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #455a64;
+  user-select: none;
+}
+
+.project-edit-member li:last-child {
+  border-bottom: none;
+}
+
+.remove-member-btn {
+  background: none;
+  border: none;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #c0392b;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: color 0.3s ease;
+}
+
+.remove-member-btn:hover {
+  color: #e74c3c;
+}
+
+/* Task */
+.project-edit-task-list {
+  height: 200px;
+}
+
+.task-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-item > div:nth-child(1) {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  margin: 12px 0;
+  width: 80dvw;
+}
+
+.task-item input[type='text'] {
+  flex: 1;
+}
+.task-item textarea {
+  flex: 2;
+}
+.task-item input[type='date'] {
+  flex: 1;
+}
+.task-item select {
+  flex: 1;
+}
+
+.task-item textarea {
+  min-height: 20px;
+}
+
+.task-item input:disabled,
+.task-item select:disabled,
+.task-item textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #9e9e9e;
+}
+
+.task-item span {
+  margin: 0 1px;
+}
+
+.project-edit-task button {
+  flex: 0 0 auto;
+  padding: 8px 15px;
+  border-radius: 6px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  user-select: none;
+  transition: background-color 0.25s ease;
+}
+
+.project-edit-task button:hover {
+  background-color: #219150;
+}
+
+/* Form for adding new task */
+
+.new-task-form {
+  margin-top: 1rem;
+}
+
+.new-task-form label {
+  display: block;
+  margin-top: 0.8rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.new-task-form input,
+.new-task-form textarea,
+.new-task-form select {
+  width: 100%;
+  font-size: 1rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1.8px solid #bdc7c7;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.new-task-form input:focus,
+.new-task-form textarea:focus,
+.new-task-form select:focus {
+  border-color: #2980b9;
+  outline: none;
+  box-shadow: 0 0 6px #2980b988;
+}
+
+.new-task-form textarea {
+  min-height: 50px;
+  resize: vertical;
+}
+
+.new-task-form button {
+  margin-top: 1rem;
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: none;
+  background-color: #27ae60;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.22s ease;
+  user-select: none;
+}
+
+.new-task-form button:hover {
+  background-color: #219150;
+}
+
+/* button */
+.actions {
+  margin: 10px;
+  display: flex;
+  justify-content: flex-end;
   gap: 1rem;
 }
 
 .actions button {
-  width: 100%;
-  padding: 0.6rem 1.3rem;
-  border-radius: 6px;
-  font-size: 1rem;
   font-weight: 600;
-  cursor: pointer;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 8px;
   border: none;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
 }
 
 .actions button:first-child {
-  background-color: #27ae60;
+  background: #27ae60;
   color: white;
+  transition: background 0.2s ease;
 }
 
 .actions button:first-child:hover {
-  background-color: #219150;
+  background: #219150;
 }
 
 .actions button:last-child {
-  background-color: #e74c3c;
+  background: #e74c3c;
   color: white;
+  transition: background 0.2s ease;
 }
 
 .actions button:last-child:hover {
-  background-color: #c0392b;
+  background: #c0392b;
 }
 
-hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 1px solid #ecf0f1;
-}
+/* Error messages */
 
-ul {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 0.5rem;
-  max-height: 240px;
-  overflow-y: auto;
-  border: 1px solid #ecf0f1;
-  border-radius: 6px;
-  background: #fafafa;
-}
-
-ul li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #e1e1e1;
-  font-size: 1rem;
-  color: #2c3e50;
-  user-select: none;
-}
-
-ul li:last-child {
-  border-bottom: none;
-}
-
-button.btn-remove-member {
-  background: none;
-  border: none;
+.error {
   color: #e74c3c;
-  font-weight: 700;
-  font-size: 1.4rem;
-  cursor: pointer;
-  padding: 0 8px;
-  user-select: none;
-  line-height: 1;
-  transition: color 0.3s ease;
-}
-
-button.btn-remove-member:hover {
-  color: #c0392b;
-}
-
-input.input-valid {
-  border-color: #27ae60;
-  box-shadow: 0 0 6px #27ae60aa;
-}
-
-input.input-invalid {
-  border-color: #e74c3c;
-  box-shadow: 0 0 6px #e74c3caa;
-}
-
-.error-message {
-  margin-top: 0.4rem;
-  margin-bottom: 1.2rem;
-  font-size: 0.9rem;
-  color: #e74c3c;
+  margin-top: 6px;
   font-weight: 600;
-}
-
-button[disabled] {
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-  color: #ecf0f1 !important;
+  font-size: 0.9rem;
 }
