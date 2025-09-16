@@ -1,3 +1,4 @@
+/* Conteneur principal du formulaire */
 .signup-form {
   background-color: #f0e6d2;
   height: 500px;
@@ -5,13 +6,13 @@
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
-
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* centre verticalement */
-  align-items: center; /* centre horizontalement */
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* Styles des labels */
 .signup-form label {
   font-weight: 600;
   align-self: flex-start;
@@ -19,6 +20,7 @@
   margin: 5px 0;
 }
 
+/* Styles des inputs */
 .signup-form input {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -33,6 +35,7 @@
   outline: 2px solid #fbbf24;
 }
 
+/* Bouton de soumission */
 .signup-form button {
   width: 100%;
   padding: 0.75rem;

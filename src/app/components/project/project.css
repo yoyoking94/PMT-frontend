@@ -11,7 +11,7 @@
   font-family: inherit;
 }
 
-/* 1. Barre de création projet sur une ligne */
+/* Barre de création projet sur une ligne */
 .creationPanel.one-line form {
   display: flex;
   flex-direction: row;
@@ -69,7 +69,7 @@
   background-color: #1565c0;
 }
 
-/* 2. Slider horizontal pour projets utilisateur */
+/* Slider horizontal pour projets utilisateur */
 .sliderPanel {
   width: 100%;
   margin: 0 0 25px 0;
@@ -131,11 +131,13 @@
   color: #2550a8;
   word-break: break-word;
 }
+
 .sliderDesc {
   font-size: 0.97em;
   color: #38567d;
   word-break: break-word;
 }
+
 .sliderEmpty {
   color: #888;
   background: #f3f4f7;
@@ -143,7 +145,7 @@
   min-width: 130px;
 }
 
-/* 3. Liste complète de tous les projets */
+/* Liste complète de tous les projets */
 .projectContainer {
   width: 100%;
   overflow-y: auto;
@@ -170,7 +172,7 @@
   margin: 0;
 }
 
-/* Projets individuels sous forme de carte grille */
+/* Projets sous forme de grille */
 .projectContainer ul li {
   display: grid;
   grid-template-columns: 2fr 1.2fr 3fr 40px;
@@ -183,16 +185,18 @@
   box-shadow: 0 2px 5px rgb(0 0 0 / 0.04);
   transition: box-shadow 0.23s;
 }
+
 .projectContainer ul li:hover {
   box-shadow: 0 6px 12px rgb(0 0 0 / 0.12);
 }
+
 .projectContainer ul li div {
   overflow-wrap: break-word;
   font-size: 1em;
   color: #2c3e50;
 }
 
-/* Boutons edit et accéder */
+/* Boutons edit et accès */
 .projectContainer button {
   border: none;
   background: none;
@@ -203,11 +207,12 @@
   user-select: none;
   padding: 0 3px;
 }
+
 .projectContainer button:hover {
   color: #195c9a;
 }
 
-/* Responsive Adaptations */
+/* Responsive */
 @media (max-width: 880px) {
   .projectContainer ul li {
     grid-template-columns: 2fr 1.25fr 2fr 40px;

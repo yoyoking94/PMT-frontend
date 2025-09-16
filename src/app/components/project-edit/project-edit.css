@@ -1,7 +1,7 @@
 .back-button {
   position: relative;
-  top: 10px;
-  right: 50px;
+  top: 25px;
+  right: 60px;
 }
 
 .back-button button {
@@ -13,12 +13,17 @@
 
 .project-edit {
   width: 90vw;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .project-edit > *:nth-child(2) {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .project-edit-info,
@@ -27,25 +32,27 @@
 .new-task-form {
   background-color: #fafafa;
   margin: 10px;
-  padding: 10px;
-
+  padding: 15px 20px;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 8px;
   overflow-y: auto;
+  box-sizing: border-box;
+  box-shadow: 1px 1px 8px rgb(0 0 0 / 0.05);
 }
+
 .project-edit-info {
   height: 350px;
-  flex: 2;
+  flex: 2 1 60%;
 }
 
 .project-edit-member {
   height: 350px;
-  flex: 1;
+  flex: 1 1 35%;
 }
 
 .project-edit-task {
-  flex: 1;
+  flex: 1 1 100%;
+  margin-top: 10px;
 }
 
 h2,
@@ -54,6 +61,7 @@ h4 {
   font-weight: 600;
   margin-bottom: 1rem;
   padding-bottom: 0.3rem;
+  color: #34495e;
 }
 
 label {
@@ -69,8 +77,8 @@ input[type='email'],
 textarea,
 select {
   font-size: 1rem;
-  min-height: 54px;
-  padding: 0.5rem 0.7rem;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
   font-family: inherit;
   border-radius: 6px;
   border: 1.8px solid #bdc7c7;
@@ -84,11 +92,11 @@ textarea:focus,
 select:focus {
   border-color: #2980b9;
   outline: none;
-  box-shadow: 0 0 6px #2980b988;
+  box-shadow: 0 0 8px #2980b999;
 }
 
 textarea {
-  min-height: 100px;
+  min-height: 90px;
   resize: vertical;
 }
 
@@ -99,7 +107,7 @@ textarea {
 }
 
 .project-edit-member li {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -121,7 +129,7 @@ textarea {
   font-size: 1.3rem;
   color: #c0392b;
   cursor: pointer;
-  margin-left: 6px;
+  margin-left: 8px;
   transition: color 0.3s ease;
 }
 
@@ -131,36 +139,62 @@ textarea {
 
 /* Task */
 .project-edit-task-list {
-  height: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 8px;
+  border-radius: 8px;
 }
 
 .task-item {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+  box-sizing: border-box;
 }
 
 .task-item > div:nth-child(1) {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
+  flex-grow: 1;
+  gap: 15px;
   align-items: center;
-  margin: 12px 0;
-  width: 80dvw;
 }
 
 .task-item input[type='text'] {
-  flex: 1;
+  flex: 1 1 200px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
 }
+
 .task-item textarea {
-  flex: 2;
+  flex: 2 1 280px;
+  min-height: 30px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  resize: vertical;
+  font-size: 0.95rem;
 }
+
 .task-item input[type='date'] {
-  flex: 1;
+  flex: 1 1 140px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
 }
+
 .task-item select {
-  flex: 1;
+  flex: 1 1 120px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
 }
 
 .task-item textarea {
@@ -176,18 +210,21 @@ textarea {
 }
 
 .task-item span {
-  margin: 0 1px;
+  margin: 0 4px;
+  font-size: 1rem;
+  color: #34495e;
+  min-width: 120px;
 }
 
 .project-edit-task button {
   flex: 0 0 auto;
   padding: 8px 15px;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #27ae60;
   color: white;
   border: none;
   cursor: pointer;
-  margin-left: 6px;
+  margin-left: 8px;
   font-weight: 600;
   font-size: 0.95rem;
   user-select: none;
@@ -198,10 +235,30 @@ textarea {
   background-color: #219150;
 }
 
-/* Form for adding new task */
+/* Statuts de tâches - fond coloré selon status */
+.status-etudes {
+  background-color: #f0f8ff; /* bleu clair */
+}
 
+.status-en-cours {
+  background-color: #fffacd; /* jaune clair */
+}
+
+.status-test {
+  background-color: #ffe4e1; /* rose clair */
+}
+
+.status-fait {
+  background-color: #d3ffd3; /* vert clair */
+}
+
+/* Form for adding new task */
 .new-task-form {
-  margin-top: 1rem;
+  margin-top: 1.2rem;
+  padding: 10px 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.06);
 }
 
 .new-task-form label {
@@ -216,8 +273,8 @@ textarea {
 .new-task-form select {
   width: 100%;
   font-size: 1rem;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: 1.8px solid #bdc7c7;
   box-sizing: border-box;
   transition: border-color 0.3s ease;
@@ -228,18 +285,18 @@ textarea {
 .new-task-form select:focus {
   border-color: #2980b9;
   outline: none;
-  box-shadow: 0 0 6px #2980b988;
+  box-shadow: 0 0 8px #2980b988;
 }
 
 .new-task-form textarea {
-  min-height: 50px;
+  min-height: 60px;
   resize: vertical;
 }
 
 .new-task-form button {
   margin-top: 1rem;
-  padding: 9px 18px;
-  border-radius: 6px;
+  padding: 11px 24px;
+  border-radius: 8px;
   border: none;
   background-color: #27ae60;
   color: white;
@@ -253,7 +310,7 @@ textarea {
   background-color: #219150;
 }
 
-/* button */
+/* action buttons */
 .actions {
   margin: 10px;
   display: flex;
@@ -264,16 +321,16 @@ textarea {
 .actions button {
   font-weight: 600;
   font-size: 1rem;
-  padding: 10px 20px;
+  padding: 12px 26px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .actions button:first-child {
   background: #27ae60;
   color: white;
-  transition: background 0.2s ease;
 }
 
 .actions button:first-child:hover {
@@ -283,7 +340,6 @@ textarea {
 .actions button:last-child {
   background: #e74c3c;
   color: white;
-  transition: background 0.2s ease;
 }
 
 .actions button:last-child:hover {
@@ -291,10 +347,10 @@ textarea {
 }
 
 /* Error messages */
-
 .error {
   color: #e74c3c;
-  margin-top: 6px;
+  margin-top: 8px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  user-select: none;
 }

@@ -25,20 +25,22 @@
     <div class="project-edit-member">
       <h3>Membres</h3>
       <ul>
-        <li *ngFor="let member of members; trackBy: trackByMemberId">
-          {{ member.user.username }} - {{ member.role }}
-          <button
-            *ngIf="canModifyProject()"
+        @for (member of members; track trackByMemberId($index, member)) {
+        <li>
+          {{ member.user.username }} - {{ member.role }} @if (canModifyProject()) {<button
             class="remove-member-btn"
             (click)="removeMember(member.id)"
           >
-            ×
-          </button>
+            ×</button
+          >}
         </li>
-        <li *ngIf="members.length === 0">Aucun membre</li>
+        } @if (members.length === 0) {
+        <li>Aucun membre</li>
+        }
       </ul>
 
-      <div *ngIf="canModifyProject()" class="invite-section">
+      @if (canModifyProject()) {
+      <div class="invite-section">
         <h4>Inviter membre</h4>
         <div style="display: flex">
           <input
@@ -62,81 +64,118 @@
         >
           Inviter
         </button>
-        <div class="error" *ngIf="inviteErrorMessage">{{ inviteErrorMessage }}</div>
+        @if (inviteErrorMessage) {
+        <div class="error">{{ inviteErrorMessage }}</div>
+        }
       </div>
+      }
     </div>
   </div>
   <div class="project-edit-task">
     <h3>Tâches</h3>
     <div class="project-edit-task-list">
-      <div *ngFor="let task of tasks" class="task-item" [attr.data-task-id]="task.id">
+      @for (task of tasks; track task.id) {
+      <div
+        class="task-item"
+        [ngClass]="getTaskStatusClass(task.status)"
+        [attr.data-task-id]="task.id"
+      >
         <div>
-          <span *ngIf="editingTaskId !== task.id">{{ task.name }}</span>
-          <input *ngIf="editingTaskId === task.id" [(ngModel)]="task.name" type="text" />
+          <!-- Nom de la tâche -->
+          <div class="task-field">
+            @if (editingTaskId !== task.id) {
+            <span class="task-name">Nom : {{ task.name }}</span>
+            } @if (editingTaskId === task.id) {
+            <input [(ngModel)]="task.name" type="text" class="input-text" />
+            }
+          </div>
 
-          <span *ngIf="editingTaskId !== task.id" style="margin: 0 10px">{{
-            task.description
-          }}</span>
-          <textarea *ngIf="editingTaskId === task.id" [(ngModel)]="task.description"></textarea>
+          <!-- Description -->
+          <div class="task-field">
+            @if (editingTaskId !== task.id) {
+            <span class="task-desc">Description : {{ task.description || '—' }}</span>
+            } @if (editingTaskId === task.id) {
+            <textarea [(ngModel)]="task.description" class="input-textarea"></textarea>
+            }
+          </div>
 
-          <span *ngIf="editingTaskId !== task.id">à faire avant le {{ task.dueDate }}</span>
-          <input *ngIf="editingTaskId === task.id" type="date" [(ngModel)]="task.dueDate" />
+          <!-- Date début -->
+          <div class="task-field">
+            @if (editingTaskId !== task.id) {
+            <span class="task-date">Date de début : {{ task.dueDate }}</span>
+            } @if (editingTaskId === task.id) {
+            <input type="date" [(ngModel)]="task.dueDate" class="input-date" />
+            }
+          </div>
 
-          <span *ngIf="editingTaskId !== task.id">{{ task.priority }}</span>
-          <select *ngIf="editingTaskId === task.id" [(ngModel)]="task.priority">
-            <option value="LOW">Basse</option>
-            <option value="MEDIUM">Moyenne</option>
-            <option value="HIGH">Haute</option>
-          </select>
+          <!-- Priorité -->
+          <div class="task-field task-select">
+            @if (editingTaskId !== task.id) {
+            <span class="task-priority">Priorité : {{ task.priority }}</span>
+            } @if (editingTaskId === task.id) {
+            <select [(ngModel)]="task.priority" class="input-select">
+              <option value="Basse">Basse</option>
+              <option value="Medium">Moyenne</option>
+              <option value="Haute">Haute</option>
+            </select>
+            }
+          </div>
+
+          <!-- Statut -->
+          <div class="task-field task-select">
+            @if (editingTaskId !== task.id) {
+            <span class="task-status">Status : {{ task.status }}</span>
+            } @if (editingTaskId === task.id) {
+            <select [(ngModel)]="task.status" class="input-select">
+              <option value="etudes">Études</option>
+              <option value="en cours">En cours</option>
+              <option value="test">Test</option>
+              <option value="fait">Fait</option>
+            </select>
+            }
+          </div>
         </div>
         <div>
           <!-- Bouton toggle Edit / Save -->
-          <button
-            *ngIf="editingTaskId !== task.id && canEditTask(task)"
-            (click)="editingTaskId = task.id"
-          >
-            ✏️
-          </button>
-
-          <button
-            *ngIf="editingTaskId === task.id"
-            (click)="editingTaskId = null"
-            style="background-color: #e74c3c"
-          >
-            X
-          </button>
-          <button *ngIf="editingTaskId === task.id" (click)="saveTask(task); editingTaskId = null">
-            O
-          </button>
+          @if (editingTaskId !== task.id && canEditTask(task)) {
+          <button (click)="editingTaskId = task.id">✏️</button>
+          } @if (editingTaskId === task.id) {
+          <button (click)="editingTaskId = null" style="background-color: #e74c3c">X</button>
+          } @if (editingTaskId === task.id) {
+          <button (click)="saveTask(task); editingTaskId = null">O</button>
+          }
         </div>
       </div>
+      }
     </div>
-    <form *ngIf="canModifyProject()" (ngSubmit)="addTask()" class="new-task-form">
-      <label
-        >Nom :
+    @if (canModifyProject()) {
+    <form (ngSubmit)="addTask()" class="new-task-form">
+      <label>
+        Nom :
         <input type="text" [(ngModel)]="newTask.name" name="newTaskName" required />
       </label>
-      <label
-        >Description :
+      <label>
+        Description :
         <textarea [(ngModel)]="newTask.description" name="newTaskDescription"></textarea>
       </label>
-      <label
-        >Échéance :
-        <input type="date" [(ngModel)]="newTask.dueDate" name="newTaskDueDate" required />
+      <label>
+        Date début :
+        <input type="date" [(ngModel)]="newTask.dueDate" name="newTaskStartDate" required />
       </label>
-      <label
-        >Priorité :
+      <label>
+        Priorité :
         <select [(ngModel)]="newTask.priority" name="newTaskPriority">
-          <option value="LOW">Basse</option>
-          <option value="MEDIUM" selected>Moyenne</option>
-          <option value="HIGH">Haute</option>
+          <option value="Basse">Basse</option>
+          <option value="Moyenne" selected>Moyenne</option>
+          <option value="Haute">Haute</option>
         </select>
       </label>
       <button type="submit">Ajouter tâche</button>
     </form>
+    }
   </div>
   <div class="actions">
-    <button *ngIf="canModifyProject()" (click)="saveEdit()">Enregistrer</button>
-    <button *ngIf="canModifyProject()" (click)="deleteProject()">Supprimer</button>
+    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>} @if
+    (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
   </div>
 </section>

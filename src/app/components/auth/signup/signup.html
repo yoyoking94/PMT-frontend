@@ -1,5 +1,7 @@
 <div class="signup-form">
   <h2 class="loginFormH2">Inscription</h2>
+
+  <!-- Formulaire d'inscription -->
   <form (ngSubmit)="onSubmit()" #f="ngForm">
     <label for="username">Nom d'utilisateur</label>
     <input
@@ -32,9 +34,13 @@
     />
 
     <button type="submit">S'inscrire</button>
+
+    <!-- Message de réussite ou d'erreur -->
     @if (message) {
     <div style="color: green">{{ message }}</div>
     }
   </form>
+
+  <!-- Lien vers la page de connexion -->
   <a routerLink="/signin" class="link-button">Connectez-vous</a>
 </div>

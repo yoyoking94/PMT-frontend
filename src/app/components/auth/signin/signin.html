@@ -1,8 +1,15 @@
 <div class="login-form">
   <h2 class="loginFormH2">Connexion</h2>
+  <!-- Formulaire de connexion -->
   <form (ngSubmit)="onSubmit()" #f="ngForm">
     <label for="username">@mail</label>
-    <input type="email" [(ngModel)]="email" name="email" placeholder="Entrez votre email" required />
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      placeholder="Entrez votre email"
+      required
+    />
 
     <label for="password">Mot de passe</label>
     <input
@@ -15,9 +22,11 @@
     />
 
     <button type="submit">Se connecter</button>
+    <!-- Message d’erreur si besoin -->
     @if (errorMsg) {
     <div style="color: red">{{ errorMsg }}</div>
     }
   </form>
+  <!-- Lien vers inscription -->
   <a routerLink="/signup" class="link-button">Inscrivez-vous</a>
 </div>

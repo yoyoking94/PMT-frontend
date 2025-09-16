@@ -32,19 +32,22 @@
   <div class="sliderPanel">
     <div class="sliderTitle">Mes projets</div>
     <div class="slider">
-      @for (project of userProjects; track trackByProjectId($index, project)) {
-      <div class="sliderItem" (click)="openEdit(project)">
-        <div class="emojiContainer">
-          <!-- Emojis en position absolue -->
-          @if (canAccessProject(project, 'edit')) {<span class="emoji">✏️</span>}
-          @if (!canAccessProject(project, 'edit') && canAccessProject(project, 'view')) {<span class="emoji">👀</span>}
+      @if (userProjects.length > 0) {
+        @for (project of userProjects; track trackByProjectId($index, project)) {
+        <div
+          class="sliderItem"
+          (click)="openEdit(project)"
+        >
+          <div class="emojiContainer">
+            @if (canAccessProject(project, 'edit')) {<span class="emoji">✏️</span>}
+            @if (!canAccessProject(project, 'edit') && canAccessProject(project, 'view')) {<span class="emoji">👀</span>}
+          </div>
+          <div class="sliderName">{{ project.name }}</div>
+          <div class="sliderDesc">{{ project.description }}</div>
         </div>
-        <div class="sliderName">{{ project.name }}</div>
-        <div class="sliderDesc">{{ project.description }}</div>
-      </div>
-
-      } @if (userProjects.length === 0) {
-      <div class="sliderItem sliderEmpty">Aucun projet</div>
+        }
+      } @else {
+        <div class="sliderItem sliderEmpty">Aucun projet</div>
       }
     </div>
   </div>
@@ -53,7 +56,7 @@
   <div class="projectContainer">
     <h2>Tous les projets</h2>
     <ul>
-      @for (project of projects; track project.id) {
+      @for (project of projects; track trackByProjectId($index, project)) {
       <li
         class="clickable"
         (click)="openEdit(project)"
@@ -65,13 +68,9 @@
         <div>{{ project.startDate }}</div>
         <div>{{ project.description }}</div>
         <div style="display: flex; align-items: center; justify-content: center">
-          @if (canAccessProject(project, 'edit')) {
-          <span>✏️</span>
-          } @if (!canAccessProject(project, 'edit') && canAccessProject(project, 'view')) {
-          <span>👀</span>
-          }
+          @if (canAccessProject(project, 'edit')) {<span>✏️</span>}
+          @if (!canAccessProject(project, 'edit') && canAccessProject(project, 'view')) {<span>👀</span>}
         </div>
-        <div></div>
       </li>
       }
     </ul>
