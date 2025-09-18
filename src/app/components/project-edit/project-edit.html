@@ -24,51 +24,56 @@
     </div>
     <div class="project-edit-member">
       <h3>Membres</h3>
-      <ul>
-        @for (member of members; track trackByMemberId($index, member)) {
-        <li>
-          {{ member.user.username }} - {{ member.role }} @if (canModifyProject()) {<button
-            class="remove-member-btn"
-            (click)="removeMember(member.id)"
-          >
-            ×</button
-          >}
-        </li>
-        } @if (members.length === 0) {
-        <li>Aucun membre</li>
-        }
-      </ul>
+      <div class="member-flex">
+        <ul class="member-list">
+          @for (member of members; track trackByMemberId($index, member)) {
+          <li>
+            {{ member.user.username }} - {{ member.role }} @if (canModifyProject()) {<button
+              class="remove-member-btn"
+              (click)="removeMember(member.id)"
+            >
+              ×</button
+            >}
+          </li>
+          } @if (members.length === 0) {
+          <li>Aucun membre</li>
+          }
+        </ul>
 
-      @if (canModifyProject()) {
-      <div class="invite-section">
-        <h4>Inviter membre</h4>
-        <div style="display: flex">
-          <input
-            style="flex: 2"
-            type="email"
-            placeholder="Email"
-            [(ngModel)]="inviteEmail"
-            (ngModelChange)="onInviteEmailChange()"
-            [class.invalid]="inviteErrorMessage"
-          />
-          <select [(ngModel)]="inviteRole" style="flex: 1">
-            <option value="ADMIN">Admin</option>
-            <option value="MEMBER">Membre</option>
-            <option value="OBSERVER">Observateur</option>
-          </select>
+        @if (canModifyProject()) {
+        <div class="invite-section">
+          <h4>Inviter membre</h4>
+          <div style="display: flex">
+            <input
+              style="flex: 2"
+              type="email"
+              placeholder="Email"
+              [(ngModel)]="inviteEmail"
+              (ngModelChange)="onInviteEmailChange()"
+              [class.invalid]="inviteErrorMessage"
+            />
+            <select [(ngModel)]="inviteRole" style="flex: 1">
+              <option value="ADMIN">Admin</option>
+              <option value="MEMBER">Membre</option>
+              <option value="OBSERVER">Observateur</option>
+            </select>
+            <button
+              class="add-member-btn"
+              [class.active]="inviteEmail && !inviteErrorMessage"
+              [disabled]="!inviteEmail || inviteErrorMessage"
+              (click)="inviteMember()"
+            >
+              ✔
+            </button>
+          </div>
+          @if (inviteErrorMessage) {
+          <div class="error">{{ inviteErrorMessage }}</div>
+          } @if (!inviteErrorMessage) {
+          <div class="error">&nbsp;</div>
+          }
         </div>
-        <button
-          class="remove-member-btn"
-          [disabled]="!inviteEmail || inviteErrorMessage"
-          (click)="inviteMember()"
-        >
-          Inviter
-        </button>
-        @if (inviteErrorMessage) {
-        <div class="error">{{ inviteErrorMessage }}</div>
         }
       </div>
-      }
     </div>
   </div>
   <div class="project-edit-task">
