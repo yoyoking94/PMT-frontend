@@ -21,20 +21,8 @@ export class AppComponent {
   username: string | null = ''; // Nom d’utilisateur connecté ou null
 
   constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
-    this.loadMessage();
     this.username = this.authService.getLoggedUsername();
   }
-
-  /**
-   * Charge un message simple depuis l’API backend (ex: message de bienvenue).
-   */
-  loadMessage() {
-    this.http.get('http://localhost:8080/api/hello', { responseType: 'text' }).subscribe({
-      next: (data) => (this.message = data),
-      error: () => (this.message = 'Erreur de chargement du message'),
-    });
-  }
-
   /**
    * Sur init, s’abonne aux changements du nom utilisateur connecté.
    */

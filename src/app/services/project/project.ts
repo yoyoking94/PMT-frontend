@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
  * Interface représentant un projet.
  */
 export interface Project {
-  id?: number;          // ID optionnel, généré par backend
-  name: string;         // Nom du projet (obligatoire)
+  id?: number; // ID optionnel, généré par backend
+  name: string; // Nom du projet (obligatoire)
   description?: string; // Description optionnelle
-  startDate: string;    // Date de début (format ISO string)
-  createBy: number;     // ID utilisateur créateur du projet
+  startDate: string; // Date de début (format ISO string)
+  createBy: number; // ID utilisateur créateur du projet
 }
 
 /**

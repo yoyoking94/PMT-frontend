@@ -4,9 +4,6 @@ import { Project, ProjectService } from '../../services/project/project';
 import { AuthService } from '../../services/auth/auth';
 import { ProjectsComponent } from '../project/project';
 
-/**
- * Composant affichant le tableau de bord avec la liste de projets.
- */
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -15,19 +12,31 @@ import { ProjectsComponent } from '../project/project';
   styleUrls: ['./dashboard.css'],
 })
 export class DashboardComponent implements OnInit {
-  projects: Project[] = []; // Liste de projets (pas utilisée ici, mais prévue)
+  projects: Project[] = []; // Liste des projets
   username: string | null = ''; // Nom d'utilisateur connecté
+  error: string = ''; // Message d'erreur pour la récupération projet
 
   constructor(private projectService: ProjectService, private authService: AuthService) {}
 
-  /**
-   * Initialisation du composant:
-   * - Souscription à l'observable du nom d'utilisateur
-   */
   ngOnInit() {
     this.authService.username$.subscribe({
       next: (name: string | null) => {
         this.username = name;
+      },
+    });
+
+    this.loadProjects();
+  }
+
+  loadProjects() {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => {
+        this.projects = projects;
+        this.error = '';
+      },
+      error: (err) => {
+        this.error = 'Erreur lors du chargement des projets.';
+        console.error(err);
       },
     });
   }

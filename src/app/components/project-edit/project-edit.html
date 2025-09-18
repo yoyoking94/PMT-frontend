@@ -107,7 +107,7 @@
           <!-- Date début -->
           <div class="task-field">
             @if (editingTaskId !== task.id) {
-            <span class="task-date">Date de début : {{ task.dueDate }}</span>
+            <span class="task-date">A faire pour : {{ task.dueDate }}</span>
             } @if (editingTaskId === task.id) {
             <input type="date" [(ngModel)]="task.dueDate" class="input-date" />
             }
@@ -164,7 +164,7 @@
         <textarea [(ngModel)]="newTask.description" name="newTaskDescription"></textarea>
       </label>
       <label>
-        Date début :
+        Date de fin :
         <input type="date" [(ngModel)]="newTask.dueDate" name="newTaskStartDate" required />
       </label>
       <label>

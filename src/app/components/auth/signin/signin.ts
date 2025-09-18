@@ -12,7 +12,7 @@ import { Router, RouterLink } from '@angular/router';
   standalone: true,
   imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './signin.html',
-  styleUrl: './signin.css',
+  styleUrls: ['./signin.css'],
 })
 export class SigninComponent {
   email = ''; // Email de l'utilisateur
@@ -29,7 +29,7 @@ export class SigninComponent {
       next: (response) => {
         this.authService.setLoggedUsername(response.username);
         this.errorMsg = '';
-        this.router.navigate(['/dashboard']); // Redirige après succès
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.errorMsg = err.error?.message || 'Identifiants invalides ou erreur serveur.';

@@ -6,9 +6,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Task, TaskService } from '../../services/task/task';
 
-/**
- * Composant pour modifier un projet, gérer ses membres et ses tâches.
- */
 @Component({
   selector: 'app-project-edit',
   standalone: true,
@@ -58,12 +55,6 @@ export class ProjectEditComponent implements OnInit {
     private taskService: TaskService
   ) {}
 
-  /**
-   * Initialisation :
-   * - Récupère id utilisateur et id projet URL
-   * - Charge les projets et initialise editProject
-   * - Charge membres et tâches du projet
-   */
   ngOnInit(): void {
     this.currentUserId = Number(localStorage.getItem('userId')) || 0;
     const idStr = this.route.snapshot.paramMap.get('id');
@@ -87,18 +78,13 @@ export class ProjectEditComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
     });
-
-    this.loadTasks();
   }
 
-  /**
-   * Charge la liste des membres du projet
-   */
   loadProjectMembers() {
     this.projectMemberService.getProjectMembers(this.editProject.id!).subscribe({
       next: (data) => {
-        this.members = [...data]; // nouvelle référence pour déclencher changement
-        this.cdr.detectChanges(); // rafraîchit le DOM
+        this.members = [...data];
+        this.cdr.detectChanges();
       },
       error: () => {
         this.members = [];
@@ -107,9 +93,6 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  /**
-   * Charge les tâches liées au projet
-   */
   loadTasks() {
     if (!this.editProject.id) return;
     this.taskService.getTasksByProject(this.editProject.id).subscribe({
@@ -123,9 +106,6 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  /**
-   * Ajoute une nouvelle tâche associée au projet
-   */
   addTask() {
     if (!this.newTask.name || !this.newTask.dueDate) {
       alert('Le nom et la date de début sont obligatoires.');
@@ -142,7 +122,7 @@ export class ProjectEditComponent implements OnInit {
           project: { id: this.editProject.id! },
           status: 'etudes',
         };
-        this.loadTasks(); // recharge la liste des tâches
+        this.loadTasks();
       },
       error: () => {
         alert('Erreur lors de la création de la tâche');
@@ -150,9 +130,6 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  /**
-   * Vérifie le statut de la tache (design)
-   */
   getTaskStatusClass(status: string): string {
     switch (status) {
       case 'etudes':
@@ -168,17 +145,11 @@ export class ProjectEditComponent implements OnInit {
     }
   }
 
-  /**
-   * Vérifie si l'utilisateur peut éditer une tâche
-   */
   canEditTask(task: Task): boolean {
     if (this.canModifyProject()) return true;
     return task.assignedTo === this.currentUserId;
   }
 
-  /**
-   * Sauvegarde une tâche modifiée
-   */
   saveTask(task: Task) {
     this.taskService.updateTask(task).subscribe({
       next: () => {
@@ -190,38 +161,29 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  /**
-   * Sauvegarde les modifications du projet
-   */
   saveEdit() {
+    console.log('Projet envoyé au backend:', this.editProject);
     this.projectService.updateProject(this.editProject.id!, this.editProject).subscribe({
       next: () => {
-        alert('Projet mis à jour');
         this.router.navigate(['/dashboard']);
       },
-      error: () => alert('Erreur lors de la mise à jour'),
+      error: (error) => {
+        alert('Erreur lors de la mise à jour : ' + (error.error || error.message));
+        console.error(error);
+      },
     });
   }
 
-  /**
-   * Navigation vers le dashboard
-   */
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  /**
-   * Vérifie si l'utilisateur peut modifier le projet
-   */
   canModifyProject(): boolean {
     if (this.editProject.createBy === this.currentUserId) return true;
     const member = this.members.find((m) => m.user.id === this.currentUserId);
     return member ? member.role === 'ADMIN' : false;
   }
 
-  /**
-   * Supprime le projet
-   */
   deleteProject() {
     this.projectService.deleteProject(this.editProject.id!, this.currentUserId).subscribe({
       next: () => {
@@ -234,9 +196,6 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  /**
-   * Vérifie email lors de saisie pour invitation
-   */
   onInviteEmailChange() {
     this.inviteChecking = true;
     this.inviteEmailExists = null;
@@ -271,9 +230,6 @@ export class ProjectEditComponent implements OnInit {
       });
   }
 
-  /**
-   * Invite un membre par email avec rôle
-   */
   inviteMember() {
     if (!this.inviteEmail) {
       this.inviteErrorMessage = 'Veuillez saisir un email';
@@ -297,9 +253,6 @@ export class ProjectEditComponent implements OnInit {
       });
   }
 
-  /**
-   * Supprime un membre du projet
-   */
   removeMember(memberId: number) {
     this.projectMemberService
       .deleteMember(this.editProject.id!, memberId, this.currentUserId)
@@ -308,15 +261,12 @@ export class ProjectEditComponent implements OnInit {
           this.loadProjectMembers();
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
           alert(err.error || 'Erreur lors de la suppression');
         },
       });
   }
 
-  /**
-   * Trackers d'optimisation pour *ngFor
-   */
   trackByMemberId(index: number, member: any): number {
     return member.id;
   }
