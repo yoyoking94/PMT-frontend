@@ -12,6 +12,7 @@ export interface Task {
   dueDate: string; // Date d’échéance au format ISO string
   priority: 'Basse' | 'Moyenne' | 'Haute'; // Priorité
   assignedTo?: number; // ID utilisateur assigné (optionnel)
+  assignedToName?: string; // nouveau champ pour nom de l’assigné
   project: { id: number }; // Projet parent (minimum ID requis)
   status: 'etudes' | 'en cours' | 'test' | 'fait'; // Nouveau champ statut
 }
@@ -55,8 +56,13 @@ export class TaskService {
     if (!task.id) {
       throw new Error('Task id is required for update');
     }
-    // Ajoute userId en query string pour contrôle côté serveur
+    // Préparer l'objet à envoyer
+    const taskToSend = {
+      ...task,
+      assignedTo: task.assignedTo ? { id: task.assignedTo } : null,
+      project: typeof task.project === 'number' ? { id: task.project } : task.project,
+    };
     const userId = localStorage.getItem('userId');
-    return this.http.put<Task>(`${this.apiUrl}/${task.id}?userId=${userId}`, task);
+    return this.http.put<Task>(`${this.apiUrl}/${task.id}?userId=${userId}`, taskToSend);
   }
 }

@@ -42,6 +42,7 @@ export class ProjectEditComponent implements OnInit {
     priority: 'Moyenne',
     project: { id: 0 },
     status: 'etudes',
+    assignedTo: undefined,
   };
 
   editingTaskId: number | null | undefined = null;
@@ -78,6 +79,12 @@ export class ProjectEditComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
     });
+
+    this.tasks.forEach((task) => {
+      if (!task.assignedTo) {
+        task.assignedTo = undefined; // ou null
+      }
+    });
   }
 
   loadProjectMembers() {
@@ -95,8 +102,19 @@ export class ProjectEditComponent implements OnInit {
 
   loadTasks() {
     if (!this.editProject.id) return;
+
     this.taskService.getTasksByProject(this.editProject.id).subscribe({
       next: (tasks) => {
+        // Assure que assignedTo est un number (ID) et ajoute assignedToName
+        tasks.forEach((task) => {
+          if (task.assignedTo && typeof task.assignedTo !== 'number') {
+            task.assignedTo = (task.assignedTo as any).id || undefined;
+          }
+
+          // Trouver le membre assigné et stocker son nom
+          const member = this.members.find((m) => m.user.id === task.assignedTo);
+          task.assignedToName = member ? member.user.username : 'Non assignée';
+        });
         this.tasks = tasks;
         this.cdr.detectChanges();
       },
@@ -146,8 +164,35 @@ export class ProjectEditComponent implements OnInit {
   }
 
   canEditTask(task: Task): boolean {
-    if (this.canModifyProject()) return true;
+    if (this.canModifyProject()) return true; // Admin/créateur peuvent tout modifier
+
+    const member = this.members.find((m) => m.user.id === this.currentUserId);
+    if (!member) return false;
+
+    if (member.role === 'OBSERVER') {
+      // Observateurs ne peuvent éditer que les tâches qui leur sont assignées
+      return task.assignedTo === this.currentUserId;
+    }
+
+    // Membres normaux peuvent modifier les tâches qui leur sont assignées
     return task.assignedTo === this.currentUserId;
+  }
+
+  canEditField(task: Task, field: string): boolean {
+    if (this.canModifyProject()) return true; // tout modifiable par Admin/créateur
+
+    const member = this.members.find((m) => m.user.id === this.currentUserId);
+    if (!member) return false;
+
+    if (member.role === 'OBSERVER') {
+      // Observateurs ne peuvent modifier que le statut sur tâches qui leur sont assignées (déjà géré par canEditTask)
+      return field === 'status';
+    }
+
+    // Membres normaux peuvent modifier tout sur leurs tâches
+    if (task.assignedTo === this.currentUserId) return true;
+
+    return false;
   }
 
   saveTask(task: Task) {

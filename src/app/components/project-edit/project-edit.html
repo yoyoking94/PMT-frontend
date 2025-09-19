@@ -1,5 +1,5 @@
 <div class="back-button">
-  <button (click)="goToDashboard()">⬅</button>
+  <button (click)="goToDashboard()">🔙</button>
 </div>
 <section class="project-edit">
   <h2>Modifier projet</h2>
@@ -32,7 +32,7 @@
               class="remove-member-btn"
               (click)="removeMember(member.id)"
             >
-              ×</button
+              ✘</button
             >}
           </li>
           } @if (members.length === 0) {
@@ -91,7 +91,12 @@
             @if (editingTaskId !== task.id) {
             <span class="task-name">Nom : {{ task.name }}</span>
             } @if (editingTaskId === task.id) {
-            <input [(ngModel)]="task.name" type="text" class="input-text" />
+            <input
+              [(ngModel)]="task.name"
+              type="text"
+              class="input-text"
+              [disabled]="!canEditField(task, 'name')"
+            />
             }
           </div>
 
@@ -100,7 +105,11 @@
             @if (editingTaskId !== task.id) {
             <span class="task-desc">Description : {{ task.description || '—' }}</span>
             } @if (editingTaskId === task.id) {
-            <textarea [(ngModel)]="task.description" class="input-textarea"></textarea>
+            <textarea
+              [(ngModel)]="task.description"
+              class="input-textarea"
+              [disabled]="!canEditField(task, 'name')"
+            ></textarea>
             }
           </div>
 
@@ -109,7 +118,12 @@
             @if (editingTaskId !== task.id) {
             <span class="task-date">A faire pour : {{ task.dueDate }}</span>
             } @if (editingTaskId === task.id) {
-            <input type="date" [(ngModel)]="task.dueDate" class="input-date" />
+            <input
+              type="date"
+              [(ngModel)]="task.dueDate"
+              class="input-date"
+              [disabled]="!canEditField(task, 'name')"
+            />
             }
           </div>
 
@@ -118,9 +132,13 @@
             @if (editingTaskId !== task.id) {
             <span class="task-priority">Priorité : {{ task.priority }}</span>
             } @if (editingTaskId === task.id) {
-            <select [(ngModel)]="task.priority" class="input-select">
+            <select
+              [(ngModel)]="task.priority"
+              class="input-select"
+              [disabled]="!canEditField(task, 'name')"
+            >
               <option value="Basse">Basse</option>
-              <option value="Medium">Moyenne</option>
+              <option value="Moyenne">Moyenne</option>
               <option value="Haute">Haute</option>
             </select>
             }
@@ -139,15 +157,28 @@
             </select>
             }
           </div>
+
+          <div class="task-field task-select">
+            @if (editingTaskId !== task.id) {
+            <span>Assigné à {{ task.assignedToName }}</span>
+            } @if (editingTaskId === task.id) {
+            <select [(ngModel)]="task.assignedTo" [disabled]="!canEditField(task, 'name')">
+              <option [ngValue]="undefined">Non assignée</option>
+              @for (member of members; track trackByMemberId($index, member)) {
+              <option [value]="member.user.id">
+                {{ member.user.username }}
+              </option>
+              }</select
+            >}
+          </div>
         </div>
         <div>
           <!-- Bouton toggle Edit / Save -->
           @if (editingTaskId !== task.id && canEditTask(task)) {
           <button (click)="editingTaskId = task.id">✏️</button>
           } @if (editingTaskId === task.id) {
-          <button (click)="editingTaskId = null" style="background-color: #e74c3c">X</button>
-          } @if (editingTaskId === task.id) {
-          <button (click)="saveTask(task); editingTaskId = null">O</button>
+          <button (click)="saveTask(task); editingTaskId = null">✔</button>
+          <button (click)="editingTaskId = null" style="background-color: #e74c3c">✘</button>
           }
         </div>
       </div>
@@ -180,7 +211,7 @@
     }
   </div>
   <div class="actions">
-    @if (canModifyProject()) {<button (click)="saveEdit()">Enregistrer</button>} @if
-    (canModifyProject()) {<button (click)="deleteProject()">Supprimer</button>}
+    @if (canModifyProject()) {<button (click)="saveEdit()">✔</button
+    ><button (click)="deleteProject()">✘</button>}
   </div>
 </section>

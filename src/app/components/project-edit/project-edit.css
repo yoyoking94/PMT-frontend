@@ -226,7 +226,6 @@ textarea {
   cursor: not-allowed;
 }
 
-
 /* Responsive et fix généraux */
 input[type='text'],
 input[type='date'],
@@ -406,7 +405,7 @@ select:focus {
 }
 
 .new-task-form button {
-  margin-top: 1rem;
+  margin: 1rem 0;
   padding: 11px 24px;
   border-radius: 8px;
   border: none;

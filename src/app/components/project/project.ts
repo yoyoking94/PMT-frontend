@@ -92,7 +92,9 @@ export class ProjectsComponent implements OnInit {
       const members = this.membersMap[project.id!];
       return members
         ? members.some(
-            (m) => m.userId === this.currentUserId && (m.role === 'ADMIN' || m.role === 'MEMBER')
+            (m) =>
+              m.userId === this.currentUserId &&
+              (m.role === 'ADMIN' || m.role === 'MEMBER' || m.role === 'OBSERVER')
           )
         : false;
     }
