@@ -1,0 +1,26 @@
+<div class="project-edit-members-container">
+  <h3>Membres du projet</h3>
+
+  <ul>
+    @for (membre of membres; track $index) {
+    <div>
+      <li>{{ membre.email }} - Rôle: {{ membre.role }}</li>
+      @if (isAdmin) {
+      <button (click)="deleteMembre(membre.id!)" class="btn-supprimer">x</button>
+      }
+    </div>
+    }
+  </ul>
+
+  <form [formGroup]="addForm" (ngSubmit)="addMembre()" class="form-ajout-membre">
+    @if (isAdmin) {
+    <input id="email" formControlName="email" type="email" placeholder="@mail de membre" />
+    <select id="role" formControlName="role">
+      <option value="administrateur">Administrateur</option>
+      <option value="membre">Membre</option>
+      <option value="observateur">Observateur</option>
+    </select>
+    <button type="submit" class="btn-ajouter">Ajouter membre</button>
+    }
+  </form>
+</div>

@@ -1,44 +1,37 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth/auth';
 
-/**
- * Composant racine de l’application affichant le titre, le message backend,
- * et gérant la déconnexion.
- */
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet],
-  styleUrl: './app.css',
+  imports: [RouterOutlet],
   templateUrl: './app.html',
+  styleUrls: ['./app.css'],
 })
-export class AppComponent {
-  title = () => 'Mon Application'; // Titre affiché dans la barre ou ailleurs
-  message = ''; // Message texte chargé depuis backend
-  username: string | null = ''; // Nom d’utilisateur connecté ou null
+export class AppComponent implements OnInit {
+  nom: string | null = null;
 
-  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
-    this.username = this.authService.getLoggedUsername();
-  }
-  /**
-   * Sur init, s’abonne aux changements du nom utilisateur connecté.
-   */
+  constructor(public authService: AuthService, private router: Router) {}
+
   ngOnInit() {
-    this.authService.username$.subscribe({
-      next: (name) => {
-        this.username = name;
-      },
-    });
+    this.loadUsername();
   }
 
-  /**
-   * Déconnexion : supprime l’état connecté et redirige vers la page de connexion.
-   */
+  loadUsername() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      try {
+        const userObj = JSON.parse(currentUser);
+        this.nom = userObj.user?.username || userObj.username || null;
+      } catch {
+        this.nom = null;
+      }
+    }
+  }
+
   logout() {
     this.authService.logout();
-    this.router.navigate(['/signin']);
+    this.nom = null;
+    this.router.navigate(['/login']);
   }
 }

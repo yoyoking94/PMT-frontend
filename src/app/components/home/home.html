@@ -1,0 +1,67 @@
+<div class="home-container">
+  <!-- Créer projet -->
+  <section class="project-create">
+    <h2 class="section-title">Créer un projet</h2>
+    <form [formGroup]="createForm" (ngSubmit)="onSubmitCreate()" class="form-create">
+      <div class="form-group">
+        <label for="nom" class="form-label">Nom du projet</label>
+        <input id="nom" formControlName="nom" type="text" required class="form-input" />
+      </div>
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" formControlName="description" class="form-textarea"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="dateDebut" class="form-label">Date de début</label>
+        <input id="dateDebut" formControlName="dateDebut" type="date" required class="form-input" />
+      </div>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </form>
+  </section>
+
+  <!-- Mes projets -->
+  <section class="project-list user-projects">
+    <h2 class="section-title">Mes projets</h2>
+
+    <div class="horizontal-scroll-container">
+      @for (projet of myProjects; track $index) {
+      <div class="project-card" [routerLink]="['/projects/edit', projet.id]">
+        <h3 class="project-name">{{ projet.nom }}</h3>
+        <p class="project-description">{{ projet.description }}</p>
+        <small class="project-date">Début : {{ projet.dateDebut }}</small>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Tous les projets -->
+  <section class="project-list all-projects">
+    <h2 class="section-title">Tous les projets</h2>
+
+    <input
+      type="text"
+      placeholder="Filtrer les projets..."
+      [(ngModel)]="filterText"
+      class="filter-input"
+    />
+
+    <table class="project-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>Date de début</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (projet of filteredProjects(); track $index) {
+        <tr [routerLink]="['/projects/edit', projet.id]">
+          <td>{{ projet.nom }}</td>
+          <td>{{ projet.description }}</td>
+          <td>{{ projet.dateDebut }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

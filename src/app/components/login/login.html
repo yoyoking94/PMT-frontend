@@ -1,0 +1,38 @@
+<button class="toggle-btn" (click)="toggleConnexion()">
+  Switch to {{ connexion ? 'Inscription' : 'Connexion' }}
+</button>
+
+@if (connexion) {
+<div class="form-container">
+  <h1 class="form-title">Connexion</h1>
+  <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="form">
+    <label class="form-label" for="email">Email</label>
+    <input id="email" class="form-input" type="email" formControlName="email" required />
+
+    <label class="form-label" for="password">Mot de passe</label>
+    <input id="password" class="form-input" type="password" formControlName="password" required />
+
+    <button type="submit" class="btn-submit">Se connecter</button>
+  </form>
+</div>
+} @else {
+<div class="form-container">
+  <h1 class="form-title">Inscription</h1>
+  <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" class="form">
+    <label class="form-label" for="email">Email</label>
+    <input id="email" class="form-input" type="email" formControlName="email" required />
+
+    <label class="form-label" for="username">Nom d'utilisateur</label>
+    <input id="username" class="form-input" type="text" formControlName="username" required />
+
+    <label class="form-label" for="password">Mot de passe</label>
+    <input id="password" class="form-input" type="password" formControlName="password" required />
+
+    <button type="submit" class="btn-submit">S'inscrire</button>
+  </form>
+</div>
+} @if (errorMessage) {
+<div class="error-message">
+  {{ errorMessage }}
+</div>
+}

@@ -1,0 +1,176 @@
+.home-container {
+  margin: 2rem auto;
+  width: 80dvw;
+  padding: 1rem;
+  color: #333;
+  border-radius: 8px;
+}
+
+/* Style général des sections */
+.home-container > section {
+  background-color: #fff;
+  border: 1px solid #d6d8db;
+  border-radius: 6px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Style spécifique aux titres */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2f4f4f;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 0.3rem;
+}
+
+/* Formulaire création projet */
+.form-create .form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #bfc1c3;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.btn {
+  background-color: #4a90e2;
+  border: none;
+  padding: 0.55rem 1.3rem;
+  color: white;
+  font-weight: 700;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #3b6fc2;
+}
+
+/* Listes projets simple */
+.horizontal-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
+}
+
+.project-card {
+  min-width: 250px;
+  flex: 0 0 auto;
+  background-color: white;
+  border: 1px solid #d6d8db;
+  border-radius: 6px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.project-name {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.project-description {
+  font-size: 0.95rem;
+  margin-bottom: 0.6rem;
+  color: #555;
+}
+
+.project-date {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #888;
+}
+
+/* Optional: Style scrollbar for WebKit browsers */
+.horizontal-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #4a90e2;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-track {
+  background-color: #f0f5ff;
+}
+
+/* Section "Tous les projets" avec tableau filtrable */
+
+.project-list.all-projects {
+  background-color: #f0f5ff;
+  border-color: #a3bffa;
+  height: 450px;
+  overflow: scroll;
+}
+
+.filter-input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.project-table th,
+.project-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.project-table th {
+  background-color: #4a90e2;
+  color: white;
+  text-align: left;
+}
+
+.project-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.project-table tr:hover {
+  background-color: #e6f0ff;
+  cursor: pointer;
+}

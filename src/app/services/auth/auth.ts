@@ -1,57 +1,75 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 
-interface SigninData {
+export interface User {
   email: string;
+  username?: string;
   password: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
-
-  private loggedInKey = 'loggedUser';
-  private usernameSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem(this.loggedInKey)
-  );
-  public username$ = this.usernameSubject.asObservable();
+  private baseUrl = 'http://localhost:8080/api/auth';
 
   constructor(private http: HttpClient) {}
 
-  signin(data: SigninData): Observable<any> {
-    return new Observable((observer) => {
-      this.http.post<any>(`${this.apiUrl}/signin`, data).subscribe({
-        next: (res) => {
-          this.setLoggedUsername(res.username);
-          localStorage.setItem('userId', res.id);
-          observer.next(res);
-          observer.complete();
-        },
-        error: (err) => observer.error(err),
-      });
-    });
+  register(user: User): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/register`, user).pipe(
+      catchError((error) => {
+        const errMsg = error.error?.error || "Erreur inconnue lors de l'inscription.";
+        return throwError(() => new Error(errMsg));
+      })
+    );
   }
 
-  signup(data: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/signup`, data);
+  login(user: User): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/login`, user).pipe(
+      catchError((error) => {
+        const errMsg = error.error?.error || 'Erreur inconnue lors de la connexion.';
+        return throwError(() => new Error(errMsg));
+      })
+    );
   }
 
-  setLoggedUsername(name: string) {
-    localStorage.setItem(this.loggedInKey, name);
-    this.usernameSubject.next(name);
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('currentUser');
   }
 
-  getLoggedUsername(): string | null {
-    return localStorage.getItem(this.loggedInKey);
+  loginSuccess(userData: any) {
+    localStorage.setItem('currentUser', JSON.stringify(userData));
   }
 
-  isLoggedIn(): boolean {
-    return this.getLoggedUsername() !== null;
+  private getCurrentUser(): any {
+    const userJson = localStorage.getItem('currentUser');
+    if (!userJson) return null;
+    try {
+      const stored = JSON.parse(userJson);
+      return stored.user || null; // retourne l'objet user à l'intérieur
+    } catch {
+      return null;
+    }
+  }
+
+  getCurrentUserId(): number | null {
+    const user = this.getCurrentUser();
+    return user?.id ?? null; // suppose que id est stocké
+  }
+
+  getUserById(userId: number): Observable<{ id: number; email: string }> {
+    return this.http.get<{ id: number; email: string }>(
+      `http://localhost:8080/api/utilisateurs/${userId}`
+    );
+  }
+
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return user?.roles?.includes('admin') ?? false; // supposer roles dans tableau
   }
 
   logout() {
-    localStorage.removeItem(this.loggedInKey);
-    this.usernameSubject.next(null);
+    localStorage.clear();
   }
 }

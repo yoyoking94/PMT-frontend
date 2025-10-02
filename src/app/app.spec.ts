@@ -1,65 +1,23 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { App } from './app';
 
-import { AppComponent } from './app';
-import { AuthService } from './services/auth/auth';
-import { RouterTestingModule } from '@angular/router/testing';
-
-describe('AppComponent', () => {
-  let fixture: ComponentFixture<AppComponent>;
-  let component: AppComponent;
-  let httpMock: HttpTestingController;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-
+describe('App', () => {
   beforeEach(async () => {
-    authServiceSpy = jasmine.createSpyObj<AuthService>(
-      'AuthService',
-      ['getLoggedUsername', 'logout'],
-      { username$: of('TestUser') }
-    );
-
-    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
-      imports: [AppComponent, HttpClientTestingModule, RouterTestingModule],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },
-      ],
+      imports: [App],
     }).compileComponents();
+  });
 
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController);
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
 
-    authServiceSpy.getLoggedUsername.and.returnValue('TestUser');
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should load the title correctly', () => {
-    expect(component.title()).toBe('Mon Application');
-  });
-
-  it('should initialize username with AuthService', () => {
-    expect(authServiceSpy.getLoggedUsername).toHaveBeenCalled();
-    expect(component.username).toBe('TestUser');
-  });
-
-  it('should logout and redirect', () => {
-    component.logout();
-
-    expect(authServiceSpy.logout).toHaveBeenCalled();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/signin']);
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Frontend');
   });
 });

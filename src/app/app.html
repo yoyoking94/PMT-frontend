@@ -1,10 +1,21 @@
-@if (username) {
 <header>
-  <h2>Hi {{ username }} !</h2>
-  <button (click)="logout()">⏻</button>
+  <nav>
+    <ul>
+      @if (nom) {
+      <li>Bonjour {{ nom }}!</li>
+      }
+      <li></li>
+      <li>
+        @if (authService.isAuthenticated()) {
+        <button href="#" (click)="logout()">➜]</button>
+        } @if (!authService.isAuthenticated()) {
+        <button routerLink="/login">⏻</button>
+        }
+      </li>
+    </ul>
+  </nav>
 </header>
-}
+
 <main>
   <router-outlet></router-outlet>
 </main>
-<footer></footer>

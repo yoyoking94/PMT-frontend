@@ -1,0 +1,101 @@
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f5f7fa;
+  --text-color: #333;
+  --border-radius: 12px;
+}
+.form-container {
+  width: 480px; /* largeur fixe */
+  height: 580px; /* hauteur fixe */
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.form-title {
+  font-size: 1.9rem;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* espacement entre inputs */
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.3rem;
+  user-select: none;
+}
+
+.form-input {
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  outline-offset: 2px;
+  transition: border-color 0.25s ease;
+}
+
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px var(--primary-color);
+}
+
+.btn-submit {
+  margin-top: 1.8rem;
+  padding: 0.75rem;
+  background-color: var(--primary-color);
+  border: 1px solid #0b1215;
+  border-radius: 8px;
+  color: #0b1215;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  border-radius: 25px;
+  padding: 0.4rem 1.4rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.error-message {
+  position: fixed; /* ou absolute si parent positionné */
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+  font-weight: bold;
+  background-color: #fef0f0;
+  padding: 15px 30px;
+  border: 1px solid red;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+  z-index: 1000; /* Pour être au-dessus */
+  text-align: center;
+  max-width: 90%;
+  width: 300px;
+}
