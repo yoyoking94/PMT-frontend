@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MembreProjet, MembreProjetService } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth/auth';
 })
 export class MembreComponent implements OnInit {
   @Input() projetId!: number;
+  @Output() membresChanged = new EventEmitter<void>();
 
   membres: MembreProjet[] = [];
   addForm!: FormGroup;
@@ -28,19 +29,17 @@ export class MembreComponent implements OnInit {
       email: [''],
       role: ['membre'],
     });
-
     this.loadMembres();
   }
 
   loadMembres(): void {
     this.membreService.getMembresByProjet(this.projetId).subscribe((membres) => {
       this.membres = membres;
-
       const currentUserId = this.authService.getCurrentUserId();
       this.isAdmin = membres.some(
-        (m) => m.utilisateurId === currentUserId && m.role.toLowerCase() === 'administrateur'
+        (member) =>
+          member.utilisateurId === currentUserId && member.role.toLowerCase() === 'administrateur'
       );
-
       membres.forEach((membre, index) => {
         this.authService.getUserById(membre.utilisateurId).subscribe((user) => {
           this.membres[index].email = user.email;
@@ -56,6 +55,7 @@ export class MembreComponent implements OnInit {
       this.membreService.addMembreByEmail(this.projetId, email, role, userId!).subscribe(
         () => {
           this.loadMembres();
+          this.membresChanged.emit(); // Notifie le parent du changement
           this.addForm.reset({ role: 'membre' });
         },
         () => alert("Erreur lors de l'ajout")
@@ -66,6 +66,7 @@ export class MembreComponent implements OnInit {
   deleteMembre(membreId: number): void {
     this.membreService.removeMembre(membreId).subscribe(() => {
       this.loadMembres();
+      this.membresChanged.emit(); // Notifie le parent aussi à la suppression
     });
   }
 }

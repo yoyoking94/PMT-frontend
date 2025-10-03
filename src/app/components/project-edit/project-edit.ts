@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService, Projet } from '../../services/projet/projet';
-import { MembreProjetService } from '../../services/membre/membre'; // service membres pour check admin
+import { MembreProjetService } from '../../services/membre/membre';
 import { MembreComponent } from '../membre/membre';
 import { TaskComponent } from '../task/task';
 
@@ -20,6 +20,8 @@ export class ProjectEditComponent implements OnInit {
   isAdmin: boolean = false;
   currentUserId: number = 1;
 
+  refreshFlag = 0; // compteur pour notifier la mise à jour
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -33,9 +35,7 @@ export class ProjectEditComponent implements OnInit {
     this.projectService.getProjectById(projetId).subscribe((projetData) => {
       this.projet = projetData;
       this.canEdit = this.checkIfCanEdit(projetData);
-
       this.checkAdmin(projetId, this.currentUserId);
-
       this.editForm = this.fb.group({
         nom: [{ value: this.projet.nom, disabled: !this.canEdit }],
         description: [{ value: this.projet.description, disabled: !this.canEdit }],
@@ -68,10 +68,6 @@ export class ProjectEditComponent implements OnInit {
     }
   }
 
-  goHome() {
-    this.router.navigate(['/']);
-  }
-
   onDeleteProject(projetId: number) {
     if (!confirm('Voulez-vous vraiment supprimer ce projet ?')) return;
     this.projectService.deleteProject(projetId, this.currentUserId).subscribe({
@@ -82,5 +78,13 @@ export class ProjectEditComponent implements OnInit {
         alert(err.error || 'Erreur lors de la suppression du projet');
       },
     });
+  }
+
+  goHome() {
+    this.router.navigate(['/']);
+  }
+
+  onMembresChanged(): void {
+    this.refreshFlag++; // Incrémente pour notifier à TaskComponent
   }
 }

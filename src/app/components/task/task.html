@@ -1,1 +1,63 @@
-<p>task works!</p>
+<div class="task-container">
+  <div class="task-list-section">
+    @if (taches && taches.length > 0) {
+    <h3>Tâches du projet</h3>
+    <ul>
+      @for (t of taches; track t.id) {
+      <li>
+        <strong>{{ t.nom }}</strong>
+        <p>{{ t.description }}</p>
+        <div class="task-info">
+          <span>Échéance: {{ t.dateEcheance | date : 'mediumDate' }}</span>
+          <span>Priorité: {{ t.priorite }}</span>
+          <span>Assignée à : {{ getAssignationEmail(t) }}</span>
+        </div>
+      </li>
+      }
+    </ul>
+    } @else {
+    <p>Aucune tâche disponible.</p>
+    }
+  </div>
+
+  <div class="task-form-section">
+    @if (formReady) {
+    <h3>Créer une tâche</h3>
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+      <label for="nom">Titre de la tâche</label>
+      <input formControlName="nom" id="nom" placeholder="Titre de la tâche" required />
+
+      <label for="description">Description</label>
+      <textarea formControlName="description" id="description" placeholder="Description"></textarea>
+
+      <label for="dateEcheance">Date d'échéance</label>
+      <input
+        formControlName="dateEcheance"
+        id="dateEcheance"
+        type="date"
+        placeholder="Date d'échéance"
+      />
+
+      <label for="priorite">Priorité</label>
+      <select formControlName="priorite" id="priorite">
+        <option value="faible">Faible</option>
+        <option value="moyenne" selected>Moyenne</option>
+        <option value="haute">Haute</option>
+      </select>
+
+      @if (isAdmin) {
+      <label for="membreId">Assigner à un membre</label>
+      <select formControlName="membreId" id="membreId">
+        <option value="">-- Assigner un membre --</option>
+        @for (m of membres; track m.utilisateurId) {
+        <option [value]="m.utilisateurId">{{ m.email }}</option>
+        }
+      </select>
+      } @if (!isAdmin) {
+      <button type="submit" disabled class="btn-create-task">Créer la tâche</button>
+      }
+      <button type="submit" class="btn-create-task">Créer la tâche</button>
+    </form>
+    }
+  </div>
+</div>

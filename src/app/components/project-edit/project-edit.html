@@ -7,7 +7,7 @@
 
 <div class="project-edit-wrapper">
   <div class="project-edit-info">
-    @if( projet ) {
+    @if(projet) {
     <h2>Modifier le projet {{ projet.nom }}</h2>
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <label for="nom">Nom</label>
@@ -26,11 +26,13 @@
 
   <div class="project-edit-members">
     @if (projet) {
-    <app-membre [projetId]="projet.id"></app-membre>
+    <app-membre [projetId]="projet.id" (membresChanged)="onMembresChanged()"></app-membre>
     }
   </div>
 </div>
 
 <div class="project-edit-tasks">
-  <app-task></app-task>
+  @if(projet) {
+  <app-task [projetId]="projet.id" [refreshFlag]="refreshFlag"></app-task>
+  }
 </div>
