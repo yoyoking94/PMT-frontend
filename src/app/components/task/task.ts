@@ -68,7 +68,7 @@ export class TaskComponent implements OnInit, OnChanges {
     this.membreService.getMembresByProjet(projetId).subscribe((membres) => {
       this.membres = membres;
       this.membres.forEach((membre, index) => {
-        this.authService.getUserById(membre.utilisateurId).subscribe((user) => {
+        this.authService.getUserById(membre.utilisateurId).subscribe((user: { email: string }) => {
           this.membres[index].email = user.email;
         });
       });
@@ -125,10 +125,12 @@ export class TaskComponent implements OnInit, OnChanges {
         next: () => {
           this.loadTaches(this.projetId);
           this.addForm.reset({ priorite: 'moyenne' });
+          // Affichage de l'alerte si la création a réussi
+          alert('Tâche créée avec succès!');
         },
         error: (error) => {
           console.error('Erreur lors de la création de la tâche :', error);
-          alert('Erreur lors de la création de la tâche. Voir console pour détails.');
+          alert("Erreur lors de la création de la tâche. Voir console pour plus d'info.");
         },
       });
     }
