@@ -30,4 +30,20 @@ export class TacheService {
     // Envoie directement l'objet JSON sans transformation DTO
     return this.http.post<Tache>(`${this.baseUrl}/create`, tache);
   }
+
+  updateTache(tacheId: number, data: Partial<Tache>, userId: number, userRole: string) {
+    const params = {
+      userId: userId.toString(),
+      userRole: userRole,
+    };
+    return this.http.put<Tache>(`${this.baseUrl}/update/${tacheId}`, data, { params });
+  }
+
+  deleteTache(tacheId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${tacheId}`);
+  }
+
+  getTacheById(tacheId: number) {
+    return this.http.get<Tache>(`${this.baseUrl}/${tacheId}`);
+  }
 }

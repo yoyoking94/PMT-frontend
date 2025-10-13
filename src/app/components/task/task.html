@@ -1,21 +1,35 @@
 <div class="task-container">
   <div class="task-list-section">
-    @if (taches && taches.length > 0) {
-    <h3>Tâches du projet</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h3 style="flex: 2">Tâches du projet</h3>
+      <select
+        id="statutFilter"
+        [value]="statutFilter"
+        (change)="onChangeStatutFilter($event)"
+        style="width: 100px"
+      >
+        <option value="all">Tous</option>
+        <option value="a_faire">À faire</option>
+        <option value="en_cours">En cours</option>
+        <option value="terminee">Terminée</option>
+        <option value="bloquee">Bloquée</option>
+      </select>
+    </div>
+    @if (filteredTaches.length > 0) {
     <ul>
-      @for (t of taches; track t.id) {
-      <li>
-        <strong>{{ t.nom }}</strong>
-        <p>{{ t.description }}</p>
+      @for (tache of filteredTaches; track trackByTacheId($index, tache)) {
+      <li (click)="goToTaskEdit(tache)">
+        <strong>{{ tache.nom }}</strong>
+        <p>{{ tache.description }}</p>
         <div class="task-info">
-          <span>Échéance: {{ t.dateEcheance | date : 'mediumDate' }}</span>
-          <span>Priorité: {{ t.priorite }}</span>
-          <span>Assignée à : {{ getAssignationEmail(t) }}</span>
+          <span>Échéance: {{ tache.dateEcheance | date : 'mediumDate' }}</span>
+          <span>Priorité: {{ tache.priorite }}</span>
+          <span>Assignée à : {{ getAssignationEmail(tache) }}</span>
         </div>
       </li>
       }
     </ul>
-    } @else {
+    } @if (filteredTaches.length === 0) {
     <p>Aucune tâche disponible.</p>
     }
   </div>
@@ -49,8 +63,8 @@
       <label for="membreId">Assigner à un membre</label>
       <select formControlName="membreId" id="membreId">
         <option value="">-- Assigner un membre --</option>
-        @for (m of membres; track m.utilisateurId) {
-        <option [value]="m.utilisateurId">{{ m.email }}</option>
+        @for (membre of membres; track membre.utilisateurId) {
+        <option [value]="membre.utilisateurId">{{ membre.email }}</option>
         }
       </select>
       } @if (!isAdmin) {

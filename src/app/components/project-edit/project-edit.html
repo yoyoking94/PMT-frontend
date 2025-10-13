@@ -6,8 +6,8 @@
 </div>
 
 <div class="project-edit-wrapper">
+  @if (projet) {
   <div class="project-edit-info">
-    @if(projet) {
     <h2>Modifier le projet {{ projet.nom }}</h2>
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <label for="nom">Nom</label>
@@ -19,20 +19,22 @@
       <label for="dateDebut">Date de début</label>
       <input id="dateDebut" type="date" formControlName="dateDebut" />
 
+      @if (isAdmin) {
       <button type="submit" [disabled]="!canEdit">Enregistrer</button>
+      }
     </form>
-    }
   </div>
+  } @if (projet) {
 
   <div class="project-edit-members">
-    @if (projet) {
     <app-membre [projetId]="projet.id" (membresChanged)="onMembresChanged()"></app-membre>
-    }
   </div>
-</div>
-
-<div class="project-edit-tasks">
-  @if(projet) {
-  <app-task [projetId]="projet.id" [refreshFlag]="refreshFlag"></app-task>
   }
 </div>
+
+@if (projet) {
+
+<div class="project-edit-tasks">
+  <app-task [projetId]="projet.id" [refreshFlag]="refreshFlag"></app-task>
+</div>
+}

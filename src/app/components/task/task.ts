@@ -4,6 +4,7 @@ import { DatePipe, CommonModule } from '@angular/common';
 import { TacheService, Tache } from '../../services/tache/tache';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-task',
@@ -19,7 +20,10 @@ export class TaskComponent implements OnInit, OnChanges {
 
   taches: Tache[] = [];
   membres: MembreProjet[] = [];
+  filteredTaches: Tache[] = [];
   addForm!: FormGroup;
+
+  statutFilter: string = 'all';
 
   isAdmin = false;
   isMembre = false;
@@ -31,7 +35,8 @@ export class TaskComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private tacheService: TacheService,
     private membreService: MembreProjetService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -80,9 +85,7 @@ export class TaskComponent implements OnInit, OnChanges {
         this.isMembre = role === 'membre';
         this.isObservateur = role === 'observateur';
       }
-
       this.formReady = true;
-
       if (this.isAdmin || this.isMembre) {
         this.addForm.enable();
       } else {
@@ -94,6 +97,7 @@ export class TaskComponent implements OnInit, OnChanges {
   private loadTaches(projetId: number): void {
     this.tacheService.getTachesByProjet(projetId).subscribe((taches) => {
       this.taches = taches;
+      this.applyStatutFilter();
     });
   }
 
@@ -104,34 +108,51 @@ export class TaskComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
-  if ((this.isAdmin || this.isMembre) && this.addForm.valid) {
-    const userId = Number(this.authService.getCurrentUserId());
+    if ((this.isAdmin || this.isMembre) && this.addForm.valid) {
+      const userId = Number(this.authService.getCurrentUserId());
+      const formValue = this.addForm.value;
+      const nouvelleTache: Partial<Tache> = {
+        projetId: this.projetId,
+        nom: formValue.nom,
+        description: formValue.description || null,
+        dateEcheance: formValue.dateEcheance || null,
+        priorite: formValue.priorite,
+        createurId: userId,
+        membreId: this.isAdmin && formValue.membreId ? formValue.membreId : null,
+      };
 
-    const formValue = this.addForm.value;
-    const nouvelleTache: Partial<Tache> = {
-      projetId: this.projetId,
-      nom: formValue.nom,
-      description: formValue.description || null,
-      dateEcheance: formValue.dateEcheance || null,
-      priorite: formValue.priorite,
-      createurId: userId,  // Ajout ici, très important
-      membreId: this.isAdmin && formValue.membreId ? formValue.membreId : null,
-    };
-
-    this.tacheService.creerTache(nouvelleTache).subscribe({
-      next: () => {
-        this.loadTaches(this.projetId);
-        this.addForm.reset({ priorite: 'moyenne' });
-      },
-      error: (error) => {
-        console.error("Erreur lors de la création de la tâche :", error);
-        alert("Erreur lors de la création de la tâche. Voir console pour détails.");
-      }
-    });
+      this.tacheService.creerTache(nouvelleTache).subscribe({
+        next: () => {
+          this.loadTaches(this.projetId);
+          this.addForm.reset({ priorite: 'moyenne' });
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création de la tâche :', error);
+          alert('Erreur lors de la création de la tâche. Voir console pour détails.');
+        },
+      });
+    }
   }
-}
 
   trackByTacheId(_index: number, tache: Tache): number {
     return tache.id ?? _index;
+  }
+
+  goToTaskEdit(tache: Tache) {
+    this.router.navigate(['/task-edit', tache.id]);
+  }
+
+  onChangeStatutFilter(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.statutFilter = value;
+    this.applyStatutFilter();
+  }
+
+  applyStatutFilter() {
+    if (this.statutFilter === 'all') {
+      this.filteredTaches = this.taches;
+    } else {
+      this.filteredTaches = this.taches.filter((t) => t.statut === this.statutFilter);
+    }
   }
 }
