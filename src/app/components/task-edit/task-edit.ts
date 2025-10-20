@@ -5,6 +5,7 @@ import { TacheService, Tache } from '../../services/tache/tache';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-task-edit',
@@ -22,6 +23,7 @@ export class TaskEditComponent implements OnInit {
   isMembre = false;
   isObservateur = false;
   loading = true;
+  historique: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -29,13 +31,15 @@ export class TaskEditComponent implements OnInit {
     private router: Router,
     private tacheService: TacheService,
     private membreService: MembreProjetService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.taskId = Number(this.route.snapshot.paramMap.get('id'));
     this.initForm();
     this.loadTaskAndMembres();
+    this.loadHistorique();
   }
 
   private initForm(): void {
@@ -55,9 +59,19 @@ export class TaskEditComponent implements OnInit {
         this.tache = t;
         this.membreService.getMembresByProjet(t.projetId).subscribe((membres) => {
           this.membres = membres;
-          this.setUserRoleAndEnableForm();
-          this.populateForm();
-          this.loading = false;
+          let loaded = 0;
+
+          membres.forEach((membre, index) => {
+            this.authService.getUserById(membre.utilisateurId).subscribe((user: any) => {
+              this.membres[index].email = user.email;
+              loaded++;
+              if (loaded === membres.length) {
+                this.setUserRoleAndEnableForm();
+                this.populateForm();
+                this.loading = false;
+              }
+            });
+          });
         });
       },
       error: () => {
@@ -145,7 +159,23 @@ export class TaskEditComponent implements OnInit {
     });
   }
 
-  goBack() {
+  loadHistorique(): void {
+    this.http
+      .get<any[]>(`http://localhost:8080/api/taches/${this.taskId}/historique`)
+      .subscribe((data) => {
+        // Pour chaque entrée, on récupère le nom ou email
+        data.forEach((entry) => {
+          this.http
+            .get<any>(`http://localhost:8080/api/utilisateurs/${entry.utilisateurId}`)
+            .subscribe((user) => {
+              entry.utilisateurEmail = user.email; // ou user.nom
+            });
+        });
+        this.historique = data;
+      });
+  }
+
+  goBack(): void {
     if (this.tache && this.tache.projetId) {
       this.router.navigate(['/projects/edit', this.tache.projetId]);
     } else {

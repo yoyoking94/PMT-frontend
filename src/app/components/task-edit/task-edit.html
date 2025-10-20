@@ -5,48 +5,80 @@
   }
 </div>
 
-@if (!loading) {
-<div class="task-edit-container">
-  <h2>Modifier la tâche</h2>
-  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-    <label for="nom">Titre de la tâche</label>
-    <input id="nom" type="text" formControlName="nom" />
+<div style="display: flex; flex-direction: row; gap: 20px">
+  @if (!loading) {
+  <div class="task-edit-container">
+    <h2>Modifier la tâche</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+      <label for="nom">Titre de la tâche</label>
+      <input id="nom" type="text" formControlName="nom" />
 
-    <label for="description">Description</label>
-    <textarea id="description" formControlName="description"></textarea>
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description"></textarea>
 
-    <label for="dateEcheance">Date d'échéance</label>
-    <input id="dateEcheance" type="date" formControlName="dateEcheance" />
+      <label for="dateEcheance">Date d'échéance</label>
+      <input id="dateEcheance" type="date" formControlName="dateEcheance" />
 
-    <label for="priorite">Priorité</label>
-    <select id="priorite" formControlName="priorite">
-      <option value="faible">Faible</option>
-      <option value="moyenne">Moyenne</option>
-      <option value="haute">Haute</option>
-    </select>
+      <label for="priorite">Priorité</label>
+      <select id="priorite" formControlName="priorite">
+        <option value="faible">Faible</option>
+        <option value="moyenne">Moyenne</option>
+        <option value="haute">Haute</option>
+      </select>
 
-    <label for="statut">Statut</label>
-    <select id="statut" formControlName="statut">
-      <option value="a_faire">À faire</option>
-      <option value="en_cours">En cours</option>
-      <option value="terminee">Terminée</option>
-      <option value="bloquee">Bloquée</option>
-    </select>
+      <label for="statut">Statut</label>
+      <select id="statut" formControlName="statut">
+        <option value="a_faire">À faire</option>
+        <option value="en_cours">En cours</option>
+        <option value="terminee">Terminée</option>
+        <option value="bloquee">Bloquée</option>
+      </select>
 
-    <label for="membreId" *ngIf="isAdmin">Assigner à un membre</label>
-    <select id="membreId" formControlName="membreId" *ngIf="isAdmin">
-      <option value="">-- Non assignée --</option>
-      @for (m of membres; track $index) {
-      <option [value]="m.utilisateurId">{{ m.email }}</option>
+      <label for="membreId" *ngIf="isAdmin">Assigner à un membre</label>
+      <select id="membreId" formControlName="membreId" *ngIf="isAdmin">
+        <option value="">-- Non assignée --</option>
+        @for (m of membres; track $index) {
+        <option [value]="m.utilisateurId">{{ m.email }}</option>
+        }
+      </select>
+
+      @if (!isAdmin) {
+      <button type="submit" disabled class="btn btn-create-task">Enregistrer</button>
+      } @if(isAdmin){
+      <button type="submit" class="btn btn-create-task">Enregistrer</button>
       }
-    </select>
+    </form>
+  </div>
 
-    @if (!isAdmin) {
-    <button type="submit" disabled class="btn btn-create-task">Enregistrer</button>
-    } @if(isAdmin){
-    <button type="submit" class="btn btn-create-task">Enregistrer</button>
-    }
-  </form>
+  } @if (historique.length > 0) {
+
+  <div class="task-history-container">
+    <h3>Historique des modifications</h3>
+    <ul>
+      @for (h of historique; track $index) {
+      <li>
+        <div>
+          Modifier par :
+          <strong>{{ h.utilisateurEmail || 'Utilisateur #' + h.utilisateurId }}</strong>
+        </div>
+        <div>Modifier le : {{ h.dateModification | date : 'short' }}</div>
+        <div>
+          Champ modifier : <strong>{{ h.champModifie }}</strong>
+        </div>
+        <div>
+          <div>
+            Ancienne valeur : "<i>{{ h.ancienneValeur || 'vide' }}</i
+            >"
+          </div>
+          <div>
+            Nouvelle valeur ; "<i>{{ h.nouvelleValeur || 'vide' }}</i
+            >"
+          </div>
+        </div>
+      </li>
+      }
+    </ul>
+  </div>
+
+  }
 </div>
-
-}

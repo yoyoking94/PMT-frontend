@@ -7,11 +7,11 @@ export interface Tache {
   projetId: number;
   nom: string;
   description?: string;
-  dateEcheance?: string; // YYYY-MM-DD
+  dateEcheance?: string; // format YYYY-MM-DD
   priorite: 'faible' | 'moyenne' | 'haute';
   statut?: 'a_faire' | 'en_cours' | 'terminee' | 'bloquee';
   createurId?: number;
-  membreId?: number; // Id du membre assigné (optionnel)
+  membreId?: number;
 }
 
 @Injectable({
@@ -27,15 +27,16 @@ export class TacheService {
   }
 
   creerTache(tache: Partial<Tache>): Observable<Tache> {
-    // Envoie directement l'objet JSON sans transformation DTO
     return this.http.post<Tache>(`${this.baseUrl}/create`, tache);
   }
 
-  updateTache(tacheId: number, data: Partial<Tache>, userId: number, userRole: string) {
-    const params = {
-      userId: userId.toString(),
-      userRole: userRole,
-    };
+  updateTache(
+    tacheId: number,
+    data: Partial<Tache>,
+    userId: number,
+    userRole: string
+  ): Observable<Tache> {
+    const params = { userId: userId.toString(), userRole: userRole };
     return this.http.put<Tache>(`${this.baseUrl}/update/${tacheId}`, data, { params });
   }
 
@@ -43,7 +44,7 @@ export class TacheService {
     return this.http.delete<void>(`${this.baseUrl}/delete/${tacheId}`);
   }
 
-  getTacheById(tacheId: number) {
+  getTacheById(tacheId: number): Observable<Tache> {
     return this.http.get<Tache>(`${this.baseUrl}/${tacheId}`);
   }
 }
