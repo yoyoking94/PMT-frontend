@@ -121,7 +121,6 @@ select[disabled] {
 .task-history-container ul {
   list-style: none;
   padding-left: 0;
-  max-height: 380px;
   overflow-y: auto;
   border-radius: 12px;
   border: 1px solid #d3dce6;
