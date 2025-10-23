@@ -1,23 +1,57 @@
-import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AuthService } from './services/auth/auth';
+import { Router } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { AppComponent } from './app';
 
-describe('App', () => {
+describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let routerSpy: jasmine.SpyObj<Router>;
+
   beforeEach(async () => {
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['logout']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
-      imports: [App],
+      declarations: [AppComponent],
+      imports: [RouterOutlet],
+      providers: [
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: Router, useValue: routerSpy }
+      ]
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    localStorage.clear();
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Frontend');
+  it('should create the app', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should load username from localStorage on init', () => {
+    const userData = { user: { username: 'testUser' } };
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    component.ngOnInit();
+    expect(component.nom).toBe('testUser');
+  });
+
+  it('should set nom to null if localStorage item is invalid JSON', () => {
+    localStorage.setItem('currentUser', 'invalid json');
+    component.ngOnInit();
+    expect(component.nom).toBeNull();
+  });
+
+  it('should clear nom and call logout on logout', () => {
+    component.nom = 'testUser';
+    component.logout();
+    expect(authServiceSpy.logout).toHaveBeenCalled();
+    expect(component.nom).toBeNull();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 });

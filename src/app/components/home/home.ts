@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
       (projet) =>
         projet.nom.toLowerCase().includes(filter) ||
         (projet.description?.toLowerCase().includes(filter) ?? false) ||
-        projet.dateDebut.includes(filter)
+        projet.dateDebut?.includes(filter)
     );
   }
 

@@ -6,8 +6,9 @@ export interface Projet {
   id: number;
   nom: string;
   description?: string;
-  dateDebut: string;
+  dateDebut?: string;
   createurId: number;
+  priorite?: 'faible' | 'moyenne' | 'haute';
 }
 
 @Injectable({
