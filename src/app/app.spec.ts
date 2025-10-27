@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from './services/auth/auth';
 import { Router } from '@angular/router';
-import { RouterOutlet } from '@angular/router';
 import { AppComponent } from './app';
 
 describe('AppComponent', () => {
@@ -15,12 +14,11 @@ describe('AppComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [RouterOutlet],
+      imports: [AppComponent],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
-      ]
+        { provide: Router, useValue: routerSpy },
+      ],
     }).compileComponents();
   });
 

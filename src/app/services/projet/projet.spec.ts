@@ -1,25 +1,31 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpTestingController } from '@angular/common/http/testing';
-import { MembreProjet, MembreProjetService } from '../membre/membre';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { ProjectService, Projet } from './projet';
 
-describe('MembreProjetService', () => {
-  let service: MembreProjetService;
+describe('ProjectService', () => {
+  let service: ProjectService;
   let httpMock: HttpTestingController;
 
-  const dummyMembre: MembreProjet = {
+  const dummyProject: Projet = {
     id: 1,
-    projetId: 1,
-    utilisateurId: 2,
-    role: 'membre',
-    email: 'user@example.com'
+    nom: 'Projet Test',
+    createurId: 1,
+    description: 'Description du projet',
+    dateDebut: '2025-01-01',
+    priorite: 'moyenne',
   };
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [MembreProjetService]
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [
+        ProjectService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
 
-    service = TestBed.inject(MembreProjetService);
+    service = TestBed.inject(ProjectService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -27,40 +33,71 @@ describe('MembreProjetService', () => {
     httpMock.verify();
   });
 
-  it('should retrieve members for a project', () => {
-    service.getMembresByProjet(1).subscribe(membres => {
-      expect(membres.length).toBe(1);
-      expect(membres[0].role).toBe('membre');
+  it('should create a project', () => {
+    service.createProject({ nom: 'Projet Test', createurId: 1 }).subscribe((res) => {
+      expect(res).toEqual(dummyProject);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/membres/projet/1');
-    expect(req.request.method).toBe('GET');
-    req.flush([dummyMembre]);
-  });
-
-  it('should add member by email', () => {
-    service.addMembreByEmail(1, 'user@example.com', 'membre', 10).subscribe(membre => {
-      expect(membre.id).toBe(1);
-    });
-
-    const req = httpMock.expectOne((request) =>
-      request.url === 'http://localhost:8080/api/membres/add' &&
-      request.params.get('projetId') === '1' &&
-      request.params.get('email') === 'user@example.com' &&
-      request.params.get('role') === 'membre' &&
-      request.params.get('userId') === '10'
-    );
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/create');
     expect(req.request.method).toBe('POST');
-    req.flush(dummyMembre);
+    req.flush(dummyProject);
   });
 
-  it('should delete member', () => {
-    service.removeMembre(1).subscribe(response => {
-      expect(response).toBeNull();
+  it('should update a project', () => {
+    const updated = { ...dummyProject, nom: 'Projet Modifié' };
+
+    service.updateProject(1, updated, 1).subscribe((res) => {
+      expect(res.nom).toBe('Projet Modifié');
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/membres/delete/1');
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/update/1?userId=1');
+    expect(req.request.method).toBe('PUT');
+    req.flush(updated);
+  });
+
+  it('should delete a project', () => {
+    service.deleteProject(1, 1).subscribe((res) => {
+      expect(res).toBeNull();
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/delete/1/1');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+  });
+
+  it('should fetch all projects', () => {
+    const projects = [dummyProject];
+
+    service.getAllProjects().subscribe((res) => {
+      expect(res.length).toBe(1);
+      expect(res).toEqual(projects);
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/all');
+    expect(req.request.method).toBe('GET');
+    req.flush(projects);
+  });
+
+  it('should fetch project by ID', () => {
+    service.getProjectById(1).subscribe((res) => {
+      expect(res).toEqual(dummyProject);
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/1');
+    expect(req.request.method).toBe('GET');
+    req.flush(dummyProject);
+  });
+
+  it('should fetch my projects', () => {
+    const projects = [dummyProject];
+
+    service.getMyProjects(1).subscribe((res) => {
+      expect(res.length).toBe(1);
+      expect(res[0].id).toBe(1);
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/projects/myprojects/1');
+    expect(req.request.method).toBe('GET');
+    req.flush(projects);
   });
 });

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // Importer Router
+import { Router } from '@angular/router';
 import { AuthService, User } from '../../services/auth/auth';
 
 @Component({
@@ -16,7 +16,6 @@ export class LoginComponent {
   registerForm: FormGroup;
   errorMessage: string | null = null;
 
-  // Injecte Router dans le constructeur
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: [''],
@@ -40,7 +39,9 @@ export class LoginComponent {
       next: (res) => {
         this.authService.loginSuccess(res);
         this.errorMessage = null;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home']).then(() => {
+          window.location.reload();
+        });
       },
       error: (err) => {
         this.errorMessage = err.message;

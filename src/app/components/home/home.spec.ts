@@ -3,11 +3,15 @@ import { HomeComponent } from './home';
 import { ProjectService, Projet } from '../../services/projet/projet';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let mockProjectService: jasmine.SpyObj<ProjectService>;
+
   const dummyMyProjects: Projet[] = [
     { id: 1, nom: 'Mon Projet 1', createurId: 1, dateDebut: '2025-10-20', priorite: 'moyenne' },
   ];
@@ -17,12 +21,20 @@ describe('HomeComponent', () => {
   ];
 
   beforeEach(waitForAsync(() => {
-    mockProjectService = jasmine.createSpyObj('ProjectService', ['getMyProjects', 'getAllProjects', 'createProject']);
+    mockProjectService = jasmine.createSpyObj('ProjectService', [
+      'getMyProjects',
+      'getAllProjects',
+      'createProject',
+    ]);
 
     TestBed.configureTestingModule({
-      declarations: [HomeComponent],
-      imports: [ReactiveFormsModule, FormsModule],
-      providers: [{ provide: ProjectService, useValue: mockProjectService }],
+      imports: [HomeComponent, ReactiveFormsModule, FormsModule],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: ProjectService, useValue: mockProjectService },
+      ],
     }).compileComponents();
   }));
 
@@ -33,7 +45,7 @@ describe('HomeComponent', () => {
     mockProjectService.getMyProjects.and.returnValue(of(dummyMyProjects));
     mockProjectService.getAllProjects.and.returnValue(of(dummyAllProjects));
 
-    fixture.detectChanges(); // ngOnInit()
+    fixture.detectChanges(); // Déclenche ngOnInit()
   });
 
   it('should create component', () => {
@@ -63,7 +75,9 @@ describe('HomeComponent', () => {
   });
 
   it('should create new project and reload projects', () => {
-    mockProjectService.createProject.and.returnValue(of({ id: 99, nom: 'Test Projet', createurId: 1 }));
+    mockProjectService.createProject.and.returnValue(
+      of({ id: 99, nom: 'Test Projet', createurId: 1 })
+    );
 
     component.createForm.setValue({
       nom: 'Test Projet',
@@ -79,7 +93,7 @@ describe('HomeComponent', () => {
     expect(mockProjectService.createProject).toHaveBeenCalled();
     expect(component.loadMyProjects).toHaveBeenCalled();
     expect(component.loadAllProjects).toHaveBeenCalled();
-    expect(component.createForm.value.nom).toBeNull(); // form reset after creation
+    expect(component.createForm.value.nom).toBeNull(); // Le formulaire est reset après création
   });
 
   it('should handle error when creating project', () => {

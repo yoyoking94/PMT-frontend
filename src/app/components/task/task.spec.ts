@@ -4,12 +4,15 @@ import { TacheService, Tache } from '../../services/tache/tache';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+-
 
 describe('TaskComponent', () => {
   let component: TaskComponent;
   let fixture: ComponentFixture<TaskComponent>;
+
   let tacheServiceSpy: jasmine.SpyObj<TacheService>;
   let membreServiceSpy: jasmine.SpyObj<MembreProjetService>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
@@ -32,18 +35,17 @@ describe('TaskComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      declarations: [TaskComponent],
-      imports: [ReactiveFormsModule],
+      imports: [TaskComponent, ReactiveFormsModule],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: TacheService, useValue: tacheServiceSpy },
         { provide: MembreProjetService, useValue: membreServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(TaskComponent);
     component = fixture.componentInstance;
 
@@ -53,15 +55,33 @@ describe('TaskComponent', () => {
     tacheServiceSpy.getTachesByProjet.and.returnValue(of(dummyTaches));
     authServiceSpy.getUserById.and.callFake((id: number) => of({ id, email: `user${id}@example.com` }));
 
-    fixture.detectChanges(); // ngOnInit
+    fixture.detectChanges();
+
+    component.ngOnChanges({
+      projetId: {
+        currentValue: 1,
+        previousValue: null,
+        firstChange: true,
+        isFirstChange: () => true,
+      },
+    });
+    component.applyStatutFilter();
   });
+  
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should load membres and taches and set isAdmin, isMembre flags', fakeAsync(() => {
-    component.ngOnChanges({ projetId: { currentValue: 1, firstChange: true, previousValue: null, isFirstChange: () => true } });
+    component.ngOnChanges({
+      projetId: {
+        currentValue: 1,
+        firstChange: true,
+        previousValue: null,
+        isFirstChange: () => true,
+      },
+    });
     tick();
 
     expect(component.membres.length).toBe(dummyMembres.length);
@@ -74,17 +94,16 @@ describe('TaskComponent', () => {
   it('should filter tasks by statut', () => {
     component.statutFilter = 'en_cours';
     component.applyStatutFilter();
-
     expect(component.filteredTaches.length).toBe(1);
     expect(component.filteredTaches[0].statut).toBe('en_cours');
   });
-
+  
   it('should return all tasks if filter is "all"', () => {
     component.statutFilter = 'all';
     component.applyStatutFilter();
-
     expect(component.filteredTaches.length).toBe(dummyTaches.length);
   });
+  
 
   it('should create new task when form is valid and user is admin', fakeAsync(() => {
     component.isAdmin = true;
@@ -109,7 +128,13 @@ describe('TaskComponent', () => {
   it('should not create task if form invalid or user not admin/membre', () => {
     component.isAdmin = false;
     component.isMembre = false;
-    component.addForm.setValue({ nom: '', description: '', dateEcheance: '', priorite: 'moyenne', membreId: '' });
+    component.addForm.setValue({
+      nom: '',
+      description: '',
+      dateEcheance: '',
+      priorite: 'moyenne',
+      membreId: '',
+    });
 
     component.onSubmit();
 

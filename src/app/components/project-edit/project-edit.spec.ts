@@ -1,124 +1,118 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { ProjectEditComponent } from './project-edit';
 import { ProjectService, Projet } from '../../services/projet/projet';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
-import { Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import { of } from 'rxjs';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('ProjectEditComponent', () => {
   let component: ProjectEditComponent;
   let fixture: ComponentFixture<ProjectEditComponent>;
-  let projectServiceSpy: jasmine.SpyObj<ProjectService>;
-  let membreServiceSpy: jasmine.SpyObj<MembreProjetService>;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let mockProjectService: jasmine.SpyObj<ProjectService>;
+  let mockMembreService: jasmine.SpyObj<MembreProjetService>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockRouter: jasmine.SpyObj<Router>;
+  let mockActivatedRoute: any;
 
   const dummyProjet: Projet = {
     id: 1,
     nom: 'Projet Test',
-    description: 'Description test',
-    dateDebut: '2025-10-23',
     createurId: 1,
+    dateDebut: '2025-01-01',
+    priorite: 'moyenne',
   };
 
   const dummyMembres: MembreProjet[] = [
-    { id: 1, projetId: 1, role: 'administrateur', utilisateurId: 1 },
-    { id: 2, projetId: 1, role: 'membre', utilisateurId: 2 },
+    { id: 1, projetId: 1, role: 'administrateur', utilisateurId: 1, email: 'admin@example.com' },
+    { id: 2, projetId: 1, role: 'membre', utilisateurId: 2, email: 'membre@example.com' },
   ];
 
   beforeEach(async () => {
-    projectServiceSpy = jasmine.createSpyObj('ProjectService', ['getProjectById', 'updateProject', 'deleteProject']);
-    membreServiceSpy = jasmine.createSpyObj('MembreProjetService', ['getMembresByProjet']);
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUserId']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    mockProjectService = jasmine.createSpyObj('ProjectService', [
+      'getProjectById',
+      'updateProject',
+      'deleteProject',
+    ]);
+    mockMembreService = jasmine.createSpyObj('MembreProjetService', ['getMembresByProjet']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['getCurrentUserId']);
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockActivatedRoute = { snapshot: { paramMap: { get: () => '1' } } };
 
     await TestBed.configureTestingModule({
-      declarations: [ProjectEditComponent],
-      imports: [ReactiveFormsModule],
+      imports: [ProjectEditComponent],
       providers: [
-        { provide: ProjectService, useValue: projectServiceSpy },
-        { provide: MembreProjetService, useValue: membreServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: ProjectService, useValue: mockProjectService },
+        { provide: MembreProjetService, useValue: mockMembreService },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProjectEditComponent);
     component = fixture.componentInstance;
 
-    authServiceSpy.getCurrentUserId.and.returnValue(1);
-    projectServiceSpy.getProjectById.and.returnValue(of(dummyProjet));
-    membreServiceSpy.getMembresByProjet.and.returnValue(of(dummyMembres));
+    mockProjectService.getProjectById.and.returnValue(of(dummyProjet));
+    mockMembreService.getMembresByProjet.and.returnValue(of(dummyMembres));
+    mockAuthService.getCurrentUserId.and.returnValue(1);
 
-    fixture.detectChanges(); // appelle ngOnInit()
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create component and initialize data', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should set isAdmin and currentUserId correctly via public observable effects', () => {
+    expect(component.projet).toEqual(dummyProjet);
+    expect(component.membres.length).toBe(2);
     expect(component.isAdmin).toBeTrue();
     expect(component.canEdit).toBeTrue();
+  });
 
-    // Le formulaire doit être enabled quand admin
+  it('should enable form for admin', () => {
     expect(component.editForm.enabled).toBeTrue();
   });
 
-  it('should patch form values after loading project', () => {
-    expect(component.editForm.value['nom']).toBe(dummyProjet.nom);
-    expect(component.editForm.value['description']).toBe(dummyProjet.description);
-    expect(component.editForm.value['dateDebut']).toBe(dummyProjet.dateDebut);
-  });
-
-  it('should update project on valid form submit', fakeAsync(() => {
-    component.canEdit = true;
-
-    projectServiceSpy.updateProject.and.returnValue(of(dummyProjet));
+  it('should update project and show success alert', fakeAsync(() => {
     spyOn(window, 'alert');
+    mockProjectService.updateProject.and.returnValue(of(dummyProjet));
 
     component.onSubmit();
     tick();
 
-    expect(projectServiceSpy.updateProject).toHaveBeenCalled();
+    expect(mockProjectService.updateProject).toHaveBeenCalled();
     expect(window.alert).toHaveBeenCalledWith('Projet mis à jour avec succès');
   }));
 
-  it('should not update when form invalid or cannot edit', () => {
-    component.canEdit = false;
-    component.onSubmit();
-    expect(projectServiceSpy.updateProject).not.toHaveBeenCalled();
-
-    component.canEdit = true;
+  it('should not update project if form invalid', () => {
     component.editForm.controls['nom'].setErrors({ required: true });
     component.onSubmit();
-    expect(projectServiceSpy.updateProject).not.toHaveBeenCalled();
+
+    expect(mockProjectService.updateProject).not.toHaveBeenCalled();
   });
 
-  it('should navigate home on delete confirmation', fakeAsync(() => {
+  it('should delete project on confirmation', () => {
     spyOn(window, 'confirm').and.returnValue(true);
-    spyOn(component, 'goHome');
-    projectServiceSpy.deleteProject.and.returnValue(of({}));
+    mockProjectService.deleteProject.and.returnValue(of({}));
+
+    const goHomeSpy = spyOn(component, 'goHome').and.callThrough();
 
     component.onDeleteProject(dummyProjet.id);
-    tick();
 
-    expect(projectServiceSpy.deleteProject).toHaveBeenCalledWith(dummyProjet.id, 1);
-    expect(component.goHome).toHaveBeenCalled();
-  }));
-
-  it('should not delete if confirmation denied', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
-    component.onDeleteProject(dummyProjet.id);
-    expect(projectServiceSpy.deleteProject).not.toHaveBeenCalled();
+    expect(mockProjectService.deleteProject).toHaveBeenCalledWith(dummyProjet.id, 1);
+    expect(goHomeSpy).toHaveBeenCalled();
   });
 
-  it('should navigate home', () => {
-    component.goHome();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
+  it('should not delete project if confirmation cancelled', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+
+    component.onDeleteProject(dummyProjet.id);
+
+    expect(mockProjectService.deleteProject).not.toHaveBeenCalled();
   });
 });

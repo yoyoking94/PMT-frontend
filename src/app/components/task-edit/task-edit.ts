@@ -163,12 +163,11 @@ export class TaskEditComponent implements OnInit {
     this.http
       .get<any[]>(`http://localhost:8080/api/taches/${this.taskId}/historique`)
       .subscribe((data) => {
-        // Pour chaque entrée, on récupère le nom ou email
         data.forEach((entry) => {
           this.http
             .get<any>(`http://localhost:8080/api/utilisateurs/${entry.utilisateurId}`)
             .subscribe((user) => {
-              entry.utilisateurEmail = user.email; // ou user.nom
+              entry.utilisateurEmail = user.email;
             });
         });
         this.historique = data;
@@ -179,7 +178,7 @@ export class TaskEditComponent implements OnInit {
     if (this.tache && this.tache.projetId) {
       this.router.navigate(['/projects/edit', this.tache.projetId]);
     } else {
-      this.router.navigate(['/']); // fallback si pas de projetId
+      this.router.navigate(['/']);
     }
   }
 }

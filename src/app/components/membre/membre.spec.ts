@@ -3,7 +3,7 @@ import { MembreComponent } from './membre';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
 import { AuthService } from '../../services/auth/auth';
 import { ReactiveFormsModule } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('MembreComponent', () => {
   let component: MembreComponent;
@@ -17,12 +17,15 @@ describe('MembreComponent', () => {
   ];
 
   beforeEach(async () => {
-    membreServiceSpy = jasmine.createSpyObj('MembreProjetService', ['getMembresByProjet', 'addMembreByEmail', 'removeMembre']);
+    membreServiceSpy = jasmine.createSpyObj('MembreProjetService', [
+      'getMembresByProjet',
+      'addMembreByEmail',
+      'removeMembre',
+    ]);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUserId', 'getUserById']);
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
-      declarations: [MembreComponent],
+      imports: [ReactiveFormsModule, MembreComponent],
       providers: [
         { provide: MembreProjetService, useValue: membreServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
@@ -40,7 +43,7 @@ describe('MembreComponent', () => {
     authServiceSpy.getUserById.and.callFake((id: number) =>
       of({ id: id, email: `user${id}@example.com` })
     );
-    
+
     fixture.detectChanges(); // ngOnInit
   });
 
@@ -65,7 +68,12 @@ describe('MembreComponent', () => {
     component.addMembre();
     tick();
 
-    expect(membreServiceSpy.addMembreByEmail).toHaveBeenCalledWith(1, 'newuser@example.com', 'membre', 1);
+    expect(membreServiceSpy.addMembreByEmail).toHaveBeenCalledWith(
+      1,
+      'newuser@example.com',
+      'membre',
+      1
+    );
     expect(component.membresChanged.emit).toHaveBeenCalled();
     expect(component.addForm.value.email).toBeNull();
   }));

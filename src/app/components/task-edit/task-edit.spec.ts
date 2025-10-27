@@ -22,7 +22,7 @@ describe('TaskEditComponent', () => {
     projetId: 1,
     nom: 'Tache Test',
     priorite: 'moyenne',
-    statut: 'a_faire'
+    statut: 'a_faire',
   };
 
   const dummyMembres: MembreProjet[] = [
@@ -31,15 +31,18 @@ describe('TaskEditComponent', () => {
   ];
 
   beforeEach(async () => {
-    tacheServiceSpy = jasmine.createSpyObj('TacheService', ['getTacheById', 'updateTache', 'deleteTache']);
+    tacheServiceSpy = jasmine.createSpyObj('TacheService', [
+      'getTacheById',
+      'updateTache',
+      'deleteTache',
+    ]);
     membreServiceSpy = jasmine.createSpyObj('MembreProjetService', ['getMembresByProjet']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUserId', 'getUserById']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     routeSpy = { snapshot: { paramMap: { get: () => '1' } } };
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, HttpClientTestingModule],
-      declarations: [TaskEditComponent],
+      imports: [TaskEditComponent, ReactiveFormsModule, HttpClientTestingModule],
       providers: [
         { provide: TacheService, useValue: tacheServiceSpy },
         { provide: MembreProjetService, useValue: membreServiceSpy },
@@ -57,7 +60,9 @@ describe('TaskEditComponent', () => {
     tacheServiceSpy.getTacheById.and.returnValue(of(dummyTache));
     membreServiceSpy.getMembresByProjet.and.returnValue(of(dummyMembres));
     authServiceSpy.getCurrentUserId.and.returnValue(1);
-    authServiceSpy.getUserById.and.callFake((id: number) => of({ id, email: `user${id}@example.com` }));
+    authServiceSpy.getUserById.and.callFake((id: number) =>
+      of({ id, email: `user${id}@example.com` })
+    );
 
     fixture.detectChanges();
     tick();
@@ -114,14 +119,8 @@ describe('TaskEditComponent', () => {
     component.onDeleteTask();
     tick();
 
-    const taskId = component.taskId!;
-    expect(tacheServiceSpy.updateTache).toHaveBeenCalledWith(
-      taskId,
-      jasmine.objectContaining({ nom: 'Modif Tache' }),
-      1,
-      'administrateur'
-    );
-        expect(window.alert).toHaveBeenCalledWith('Tâche supprimée');
+    expect(tacheServiceSpy.deleteTache).toHaveBeenCalledWith(component.taskId);
+    expect(window.alert).toHaveBeenCalledWith('Tâche supprimée');
     expect(component.goBack).toHaveBeenCalled();
   }));
 

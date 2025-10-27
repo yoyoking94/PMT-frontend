@@ -47,7 +47,7 @@ export class AuthService {
     if (!userJson) return null;
     try {
       const stored = JSON.parse(userJson);
-      return stored.user || null; // retourne l'objet user à l'intérieur
+      return stored.user || null;
     } catch {
       return null;
     }
@@ -55,7 +55,7 @@ export class AuthService {
 
   getCurrentUserId(): number | null {
     const user = this.getCurrentUser();
-    return user?.id ?? null; // suppose que id est stocké
+    return user?.id ?? null;
   }
 
   getUserById(userId: number): Observable<{ id: number; email: string }> {
@@ -66,7 +66,7 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.getCurrentUser();
-    return user?.roles?.includes('admin') ?? false; // supposer roles dans tableau
+    return user?.roles?.includes('admin') ?? false;
   }
 
   logout() {

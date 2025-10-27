@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService, Projet } from '../../services/projet/projet';
 import { MembreProjetService, MembreProjet } from '../../services/membre/membre';
-import { MembreComponent } from '../membre/membre';
-import { TaskComponent } from '../task/task';
 import { AuthService } from '../../services/auth/auth';
 import { CommonModule } from '@angular/common';
+import { MembreComponent } from '../membre/membre';
+import { TaskComponent } from '../task/task';
 
 @Component({
   selector: 'app-project-edit',
