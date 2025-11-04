@@ -1,4 +1,4 @@
-<img width="2126" height="1188" alt="Capture d’écran 2025-11-04 à 15 45 21" src="https://github.com/user-attachments/assets/3ff2513a-fb79-41e0-af51-19a13e140718" />
+![Capture d’écran 2025-07-16 à 14 32 24](https://github.com/user-attachments/assets/3ff2513a-fb79-41e0-af51-19a13e140718)
 
 
 # Frontend
