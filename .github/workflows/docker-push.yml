@@ -21,7 +21,7 @@ jobs:
         run: npm ci
 
       - name: Run Angular tests and coverage
-        run: npm run test -- --watch=false --code-coverage
+        run: npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
