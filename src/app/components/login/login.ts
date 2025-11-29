@@ -39,9 +39,7 @@ export class LoginComponent {
       next: (res) => {
         this.authService.loginSuccess(res);
         this.errorMessage = null;
-        this.router.navigate(['/home']).then(() => {
-          window.location.reload();
-        });
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         this.errorMessage = err.message;

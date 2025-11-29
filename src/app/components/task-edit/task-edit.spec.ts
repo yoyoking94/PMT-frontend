@@ -5,7 +5,7 @@ import { MembreProjetService, MembreProjet } from '../../services/membre/membre'
 import { AuthService } from '../../services/auth/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('TaskEditComponent', () => {
@@ -66,18 +66,22 @@ describe('TaskEditComponent', () => {
 
     fixture.detectChanges();
     tick();
+
+    // Spies globaux UNE SEULE FOIS pour tous les tests
+    spyOn(window, 'alert').and.stub();
+    spyOn(window, 'confirm').and.stub();
   }));
 
   it('should create', () => expect(component).toBeTruthy());
 
   it('should call private setUserRoleAndEnableForm and populateForm indirectly', fakeAsync(() => {
-    // On a private method, on peut l'appeler via indexation
-    component['setUserRoleAndEnableForm']();
-    component['populateForm']();
+    expect(() => component['setUserRoleAndEnableForm']()).not.toThrow();
+    expect(() => component['populateForm']()).not.toThrow();
   }));
 
   it('should update task correctly', fakeAsync(() => {
-    spyOn(window, 'alert');
+    // ne pas re-spyOn alert ici, il l’est déjà dans beforeEach
+    (window.confirm as jasmine.Spy).and.returnValue(true);
     component.isAdmin = true;
     component.taskForm.enable();
     component.taskForm.setValue({
@@ -110,8 +114,7 @@ describe('TaskEditComponent', () => {
   });
 
   it('should delete task after confirmation', fakeAsync(() => {
-    spyOn(window, 'confirm').and.returnValue(true);
-    spyOn(window, 'alert');
+    (window.confirm as jasmine.Spy).and.returnValue(true);
     component.taskId = dummyTache.id!;
     tacheServiceSpy.deleteTache.and.returnValue(of(void 0));
     spyOn(component, 'goBack');
@@ -125,7 +128,7 @@ describe('TaskEditComponent', () => {
   }));
 
   it('should not delete on confirmation cancelled', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
+    (window.confirm as jasmine.Spy).and.returnValue(false);
     component.onDeleteTask();
     expect(tacheServiceSpy.deleteTache).not.toHaveBeenCalled();
   });

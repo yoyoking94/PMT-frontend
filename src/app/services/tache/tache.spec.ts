@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+/* import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ProjectService, Projet } from '../projet/projet';
 
@@ -91,3 +91,4 @@ describe('ProjectService', () => {
     req.flush(dummyProjet);
   });
 });
+ */

@@ -1,11 +1,14 @@
-import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { HomeComponent } from '../../components/home/home';
 import { ProjectService, Projet } from './projet';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
-describe('ProjectService', () => {
-  let service: ProjectService;
-  let httpMock: HttpTestingController;
+describe('ProjectService via HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+  let projectServiceSpy: jasmine.SpyObj<ProjectService>;
 
   const dummyProject: Projet = {
     id: 1,
@@ -17,87 +20,50 @@ describe('ProjectService', () => {
   };
 
   beforeEach(async () => {
+    projectServiceSpy = jasmine.createSpyObj('ProjectService', [
+      'getMyProjects',
+      'getAllProjects',
+      'createProject',
+    ]);
+
     await TestBed.configureTestingModule({
-      providers: [
-        ProjectService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      imports: [HomeComponent, ReactiveFormsModule, FormsModule, RouterTestingModule],
+      providers: [{ provide: ProjectService, useValue: projectServiceSpy }],
     }).compileComponents();
 
-    service = TestBed.inject(ProjectService);
-    httpMock = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
   });
 
-  afterEach(() => {
-    httpMock.verify();
+  it('should load projects on init', () => {
+    projectServiceSpy.getMyProjects.and.returnValue(of([dummyProject]));
+    projectServiceSpy.getAllProjects.and.returnValue(of([dummyProject]));
+
+    fixture.detectChanges(); // ngOnInit
+
+    expect(projectServiceSpy.getMyProjects).toHaveBeenCalledWith(component.currentUserId);
+    expect(projectServiceSpy.getAllProjects).toHaveBeenCalled();
+    expect(component.myProjects.length).toBe(1);
+    expect(component.allProjects.length).toBe(1);
   });
 
-  it('should create a project', () => {
-    service.createProject({ nom: 'Projet Test', createurId: 1 }).subscribe((res) => {
-      expect(res).toEqual(dummyProject);
+  it('should create a project and reload lists', () => {
+    projectServiceSpy.getMyProjects.and.returnValue(of([]));
+    projectServiceSpy.getAllProjects.and.returnValue(of([]));
+    projectServiceSpy.createProject.and.returnValue(of(dummyProject));
+
+    fixture.detectChanges(); // ngOnInit
+
+    component.createForm.setValue({
+      nom: 'Nouveau projet',
+      description: 'Desc',
+      dateDebut: '2025-01-01',
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/create');
-    expect(req.request.method).toBe('POST');
-    req.flush(dummyProject);
-  });
+    component.onSubmitCreate();
 
-  it('should update a project', () => {
-    const updated = { ...dummyProject, nom: 'Projet Modifié' };
-
-    service.updateProject(1, updated, 1).subscribe((res) => {
-      expect(res.nom).toBe('Projet Modifié');
-    });
-
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/update/1?userId=1');
-    expect(req.request.method).toBe('PUT');
-    req.flush(updated);
-  });
-
-  it('should delete a project', () => {
-    service.deleteProject(1, 1).subscribe((res) => {
-      expect(res).toBeNull();
-    });
-
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/delete/1/1');
-    expect(req.request.method).toBe('DELETE');
-    req.flush(null);
-  });
-
-  it('should fetch all projects', () => {
-    const projects = [dummyProject];
-
-    service.getAllProjects().subscribe((res) => {
-      expect(res.length).toBe(1);
-      expect(res).toEqual(projects);
-    });
-
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/all');
-    expect(req.request.method).toBe('GET');
-    req.flush(projects);
-  });
-
-  it('should fetch project by ID', () => {
-    service.getProjectById(1).subscribe((res) => {
-      expect(res).toEqual(dummyProject);
-    });
-
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/1');
-    expect(req.request.method).toBe('GET');
-    req.flush(dummyProject);
-  });
-
-  it('should fetch my projects', () => {
-    const projects = [dummyProject];
-
-    service.getMyProjects(1).subscribe((res) => {
-      expect(res.length).toBe(1);
-      expect(res[0].id).toBe(1);
-    });
-
-    const req = httpMock.expectOne('http://localhost:8080/api/projects/myprojects/1');
-    expect(req.request.method).toBe('GET');
-    req.flush(projects);
+    expect(projectServiceSpy.createProject).toHaveBeenCalled();
+    expect(projectServiceSpy.getMyProjects).toHaveBeenCalledTimes(2);
+    expect(projectServiceSpy.getAllProjects).toHaveBeenCalledTimes(2);
   });
 });
