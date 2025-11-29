@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, Subject, throwError } from 'rxjs';
 
 export interface User {
   email: string;
@@ -13,6 +13,9 @@ export interface User {
 })
 export class AuthService {
   private baseUrl = 'http://localhost:8080/api/auth';
+
+  private authChangedSource = new Subject<void>();
+  authChanged$ = this.authChangedSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -40,6 +43,7 @@ export class AuthService {
 
   loginSuccess(userData: any) {
     localStorage.setItem('currentUser', JSON.stringify(userData));
+    this.authChangedSource.next();
   }
 
   private getCurrentUser(): any {
@@ -71,5 +75,6 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
+    this.authChangedSource.next();
   }
 }

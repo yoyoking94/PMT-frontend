@@ -25,11 +25,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!sessionStorage.getItem('homeReloaded')) {
-      sessionStorage.setItem('homeReloaded', 'true');
-      window.location.reload();
-      return;
-    }
     this.loadMyProjects();
     this.loadAllProjects();
   }

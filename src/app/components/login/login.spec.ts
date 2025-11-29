@@ -14,6 +14,8 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'loginSuccess', 'register']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy.navigate.and.returnValue(Promise.resolve(true));
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
