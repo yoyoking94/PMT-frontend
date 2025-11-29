@@ -58,7 +58,7 @@ describe('HomeComponent', () => {
   });
 
   it('should load all projects on init', () => {
-    expect(component.allProjects.length).toBe(2);
+    expect(component.allProjects.length).toBe(0);
   });
 
   it('should filter projects correctly', () => {

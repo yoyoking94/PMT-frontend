@@ -39,10 +39,12 @@ describe('ProjectService via HomeComponent', () => {
     projectServiceSpy.getMyProjects.and.returnValue(of([dummyProject]));
     projectServiceSpy.getAllProjects.and.returnValue(of([dummyProject]));
 
-    fixture.detectChanges(); // déclenche ngOnInit
+    fixture.detectChanges(); // ngOnInit
 
-    expect(projectServiceSpy.getMyProjects).toHaveBeenCalled();
+    expect(projectServiceSpy.getMyProjects).toHaveBeenCalledWith(component.currentUserId);
     expect(projectServiceSpy.getAllProjects).toHaveBeenCalled();
+    expect(component.myProjects.length).toBe(1);
+    expect(component.allProjects.length).toBe(1);
   });
 
   it('should create a project and reload lists', () => {
@@ -61,7 +63,7 @@ describe('ProjectService via HomeComponent', () => {
     component.onSubmitCreate();
 
     expect(projectServiceSpy.createProject).toHaveBeenCalled();
-    expect(projectServiceSpy.getMyProjects).toHaveBeenCalledTimes(2);   // init + après création
-    expect(projectServiceSpy.getAllProjects).toHaveBeenCalledTimes(2); // init + après création
+    expect(projectServiceSpy.getMyProjects).toHaveBeenCalledTimes(2);
+    expect(projectServiceSpy.getAllProjects).toHaveBeenCalledTimes(2);
   });
 });
